@@ -4,7 +4,6 @@
 clear
 
 echo "This script will give us environment information"
-echo "================================================"
 echo
 
 echo "This is homedir: $HOME"

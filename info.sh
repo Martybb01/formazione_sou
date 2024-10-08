@@ -15,4 +15,5 @@ echo
 
 echo "This is list of services: "
 launchctl list
+echo "================================================"
 echo

@@ -21,6 +21,6 @@ echo "${!address[*]}" # The array indices..
 # La riga 4, con la flag -A, dichiara un array associativo chiamato address.
 # Un array associativo è un array in cui gli indici non sono numeri, ma stringhe e c'è un assegnazione chiave-valore.
 # Le righe 7-9 assegnano gli indirizzi alle chiavi Charles, John e Wilma.
-# Gli echo a righe 11-13 stampano gli indirizzi delle chiavi Charles, Wilma e John.
-# L'echo a riga 17 stampa gli indici (chiavi) dell'array address --> Wilma Charles John
+# Gli echo a righe 10-12 stampano gli indirizzi delle chiavi Charles, Wilma e John.
+# L'echo a riga 16 stampa gli indici (chiavi) dell'array address --> Wilma Charles John
 # N.B è richiesto bash 4.0 o superiore per l'uso degli array associativi.

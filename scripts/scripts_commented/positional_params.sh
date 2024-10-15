@@ -59,11 +59,11 @@ exit 0
 # L'echo senza argomenti stampa una nuova riga.
 # L'echo a riga 10 stampa il nome dello script con il percorso completo.
 # L'echo a riga 12 stampa il nome dello script senza il percorso.
-# L'if statement a riga 16 controlla se il primo parametro è stato passato.
+# L'if statement a riga 17 controlla se il primo parametro è stato passato.
 # In generale il check viene ripetuto per i primi 3 parametri + il decimo.
 # Se l'if statement è vero, lo script stampa il parametro corrispondente, altrimenti non fa nulla.
 # L'echo a riga 40 stampa tutti i parametri passati allo script.
-# L'if statement a riga 43 controlla se il numero di parametri passati è minore di 10 (MINPARAMS).
+# L'if statement a riga 44 controlla se il numero di parametri passati è minore di 10 (MINPARAMS).
 # Se l'if statement è vero, lo script stampa un messaggio di errore.
 
 

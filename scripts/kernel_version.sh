@@ -16,7 +16,5 @@ exit 0
 
 #------------------------------------------
 # Other possibilities for finding the running kernel version
-
 # current_kernel=$(hostnamectl | grep "Kernel" | awk '{print $3}')
-# 
 

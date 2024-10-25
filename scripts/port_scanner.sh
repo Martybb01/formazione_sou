@@ -8,8 +8,26 @@ fi
 IP=$1
 PORT_RANGE=$2
 
+if ! echo $IP | grep -qE "^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[1-9]?[0-9])$"; then
+	echo "Invalid IP address"
+	exit 1
+fi
+
+if ! echo $PORT_RANGE | grep -qE "^(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3})(-(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?$"; then
+	echo "Invalid port range"
+	exit 1
+fi
+
 START_PORT=$(echo $PORT_RANGE | cut -d'-' -f1)
 END_PORT=$(echo $PORT_RANGE | cut -d'-' -f2)
+
+if [ $START_PORT -gt $END_PORT ]; then
+	TEMP=$START_PORT
+	START_PORT=$END_PORT
+	END_PORT=$TEMP
+fi
+
+echo "Scanning ports $START_PORT-$END_PORT on $IP..."
 
 for port in $(seq $START_PORT $END_PORT); do
 	result=$(nc -v -w 1 $IP $port 2>&1)

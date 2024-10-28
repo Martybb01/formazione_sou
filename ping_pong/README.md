@@ -24,6 +24,8 @@ cd <repository-directory>
 ### 2. Avvia le VM
 ```bash
 vagrant up
+vagrant ssh node1
+vagrant ssh node2
 ```
 ### 3. Verifica chi sta runnando il container
 ```bash

@@ -46,7 +46,6 @@ done
 echo "Scan completed!"
 exit 0
 
-
 # -----------Spiegazione-----------
 # Script di port scanning che accetta due argomenti: un indirizzo IP e un intervallo di porte.
 # Ciclo for che esegue il comando nc per ogni porta nell'intervallo specificato dall'utente.

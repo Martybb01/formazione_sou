@@ -2,12 +2,6 @@
 
 NODE_NAME=$1
 
-if [ "$NODE_NAME" == "node1" ]; then
-  OTHER_NODE_IP="192.168.56.11"
-else
-  OTHER_NODE_IP="192.168.56.10"
-fi
-
 CURRENT_MINUTE=$(date +"%M")
 
 # Se il minuto corrente è pari, attiva il container sul node1

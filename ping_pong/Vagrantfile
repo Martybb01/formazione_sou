@@ -18,3 +18,21 @@ Vagrant.configure("2") do |config|
     node2.vm.provision "shell", path: "setup.sh", args: ["node2"]
   end
 end
+
+# ---- Alternative to the above setup following Ruby coding style ----
+# Vagrant.configure("2") do |config|
+#   nodes = {
+#     "node1" => "192.168.56.10"
+#     "node2" => "192.168.56.11"
+#   }
+
+#   nodes.each do |name, ip|
+#     config.vm.define name do |node|
+#       node.vm.box = "ubuntu/bionic64"
+#       node.vm.hostname = name
+#       node.vm.network "private_network", ip: ip
+#       node.vm.provision "docker"
+#       node.vm.provision "shell", path: "setup.sh", args: [name]
+#     end
+#   end
+# end

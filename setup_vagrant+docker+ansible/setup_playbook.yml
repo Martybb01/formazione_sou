@@ -99,7 +99,7 @@
         env:
           JENKINS_URL: "http://192.168.100.42:8080"
           JENKINS_AGENT_NAME: "Jenkins-slave"
-          JENKINS_AGEN_WORKDIR: "/home/jenkins/agent"
+          JENKINS_AGENT_WORKDIR: "/home/jenkins/agent"
           JENKINS_SECRET: "{{ jenkins_agent_secret }}"
         volumes:
           - jenkins_slave_home:/home/jenkins/agent

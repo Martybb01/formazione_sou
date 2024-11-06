@@ -1,3 +1,4 @@
 *.[oa]
 ubuntu-bionic-18.04-cloudimg-console.log
 .vagrant
+vault_pwd.txt

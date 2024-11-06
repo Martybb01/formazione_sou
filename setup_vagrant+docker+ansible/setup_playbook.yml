@@ -1,0 +1,51 @@
+- name: Configure Docker and create Network
+  hosts: all
+  become: true
+  tasks:
+    - name: Install packages
+      ansible.builtin.dnf:
+        name:
+          - dnf-utils
+          - dnf-plugins-core
+          - python3-requests
+          - yum-utils
+        state: present
+
+    - name: Set up Docker repo
+      ansible.builtin.yum_repository:
+        name: docker
+        description: Docker repo
+        baseurl: https://download.docker.com/linux/centos/9/x86_64/stable
+        gpgcheck: true
+        gpgkey: https://download.docker.com/linux/centos/gpg
+        enabled: true
+
+    - name: Install Docker
+      ansible.builtin.dnf:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+        update_cache: true
+
+    - name: Start Docker
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add vagrant user to docker group
+      ansible.builtin.user:
+        name: vagrant
+        groups: docker
+        append: true
+
+    - name: Create Docker network
+      community.docker.docker_network:
+        name: my_network
+        state: present
+        driver: bridge
+        ipam_config:
+          - subnet: "192.168.100.0/24"
+            gateway: "192.168.100.1"

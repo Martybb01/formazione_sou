@@ -101,4 +101,5 @@ I namespaces sono una feature del kernel di Linux che consente di restringere la
 * user: utenti
 * ipc: shared memory e interprocess communication
 * time: clock di sistema
+
 I namespaces associati ai vari processi vengono esposti dal kernel attraverso il filesystem /proc `(/proc/<pid>/ns/)`.

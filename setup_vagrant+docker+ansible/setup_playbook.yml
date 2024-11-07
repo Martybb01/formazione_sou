@@ -94,7 +94,7 @@
         state: started
         restart_policy: always
         env:
-          JENKINS_URL: "http://192.168.100.42:8080"
+          JENKINS_URL: "http://jenkins-master:8080"
           JENKINS_AGENT_NAME: "Jenkins-slave"
           JENKINS_AGENT_WORKDIR: "/home/jenkins/agent"
           JENKINS_SECRET: "{{ jenkins_agent_secret }}"

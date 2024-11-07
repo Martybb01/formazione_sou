@@ -24,6 +24,7 @@ Inoltre specifico alcune variabili d'ambiente, tra cui:
 	* Durante il processo di creazione, verrà fornito un token segreto, appunto il jenkins_agent_secret, che permette allo slave di registrarsi e connettersi con il master
 	* Ho usato Ansible Vault per criptare la variabile --> `ansible-vault create main.yml`
 	* Nel playbook aggiungo la direttiva per il file criptato --> `vars_files: vars/main.yml`
+
 Per verificare che lo slave si colleghi correttamente al master:
 ```
 docker exec -it jenkins-slave /bin/bash

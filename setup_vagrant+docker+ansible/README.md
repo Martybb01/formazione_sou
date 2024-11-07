@@ -15,7 +15,7 @@ Per verificare che sia stato correttamente creato entrare dentro la VM --> `dock
 Ho usato il modulo `community.docker.docker_container` per creare un container Docker con Jenkins master specificando il network (my_network) e l'IP statico.
 Per concludere la configurazione di Jenkins è necessario entrare nella UI sul browser e autenticarsi, quindi per recuperare la password, entrare nella VM e runnare il comando --> `docker exec jenkins-master cat /var/jenkins_home/secrets/initialAdminPassword`
 
-## Step 4 - Installazione di un Jenkins slave in container Docker tramite Ansible, che si collega al master
+### Step 4 - Installazione di un Jenkins slave in container Docker tramite Ansible, che si collega al master
 Per lo slave, è molto importante che sia nello stesso network del master.
 Inoltre specifico alcune variabili d'ambiente, tra cui:
 * JENKINS_URL --> specifica l'URL del master a cui lo slave deve connettersi

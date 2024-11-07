@@ -7,10 +7,7 @@
     - name: Install packages
       ansible.builtin.dnf:
         name:
-          - dnf-utils
           - dnf-plugins-core
-          - python3-requests
-          - yum-utils
         state: present
 
     - name: Set up Docker repo

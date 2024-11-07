@@ -90,3 +90,15 @@ perchè quando Docker termina un container, chiude i suoi namespace terminando t
 
 * **Cosa succede se si prova a killare il processo da dentro il container?** Non è possibile killare il processo creato con nsenter da dentro il container target poichè esiste nel namespace dei PID della VM e non è realmente un processo interno al container. Infatti il processo viene eseguito nel namespace della VM e viene agganciato ai namespace del container target e quindi appare come se fosse nel container, ma in verità appartiene al namespace dell'host.
 
+----------------------------------------------------------------------------------------------------------------------------------------
+## About Namespaces
+
+I namespaces sono una feature del kernel di Linux che consente di restringere la visibilità di un processo a le varie risorse di sistema.
+*Esistono diversi tipi di namespace per ogni tipologia di risorsa:*
+* pid: processi
+* mnt: mountpoint
+* net: interfacce di rete
+* user: utenti
+* ipc: shared memory e interprocess communication
+* time: clock di sistema
+I namespaces associati ai vari processi vengono esposti dal kernel attraverso il filesystem /proc `(/proc/<pid>/ns/)`.

@@ -1,0 +1,104 @@
+- name: Configure Docker, create Network and Install Jenkins
+  hosts: all
+  become: true
+  vars_files:
+    - vars/secrets.yml
+  tasks:
+    - name: Install packages
+      ansible.builtin.dnf:
+        name:
+          - dnf-plugins-core
+          - python3-requests
+        state: present
+
+    - name: Set up Docker repo
+      ansible.builtin.yum_repository:
+        name: docker
+        description: Docker repo
+        baseurl: https://download.docker.com/linux/centos/9/x86_64/stable
+        gpgcheck: true
+        gpgkey: https://download.docker.com/linux/centos/gpg
+        enabled: true
+
+    - name: Install Docker
+      ansible.builtin.dnf:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+        update_cache: true
+
+    - name: Start Docker
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add vagrant user to docker group
+      ansible.builtin.user:
+        name: vagrant
+        groups: docker
+        append: true
+
+    - name: Create Docker network
+      community.docker.docker_network:
+        name: my_network
+        state: present
+        driver: bridge
+        ipam_config:
+          - subnet: "192.168.100.0/24"
+            gateway: "192.168.100.1"
+
+    - name: Install Jenkins
+      community.docker.docker_image:
+        name: jenkins/jenkins
+        state: present
+        tag: lts
+        source: pull
+
+    - name: Create Jenkins volume
+      community.docker.docker_volume:
+        name: jenkins_home
+        state: present
+
+    - name: Run Jenkins container
+      community.docker.docker_container:
+        name: jenkins-master
+        image: jenkins/jenkins:lts
+        state: started
+        restart_policy: always
+        ports:
+          - "8080:8080"
+          - "50000:50000"
+        networks:
+          - name: my_network
+            ipv4_address: 192.168.100.44
+        volumes:
+          - jenkins_home:/var/jenkins_home
+
+    - name: Pull Jenkins agent image
+      community.docker.docker_image:
+        name: jenkins/inbound-agent
+        tag: latest
+        source: pull
+
+    - name: Create Docker volume for Jenkins slave
+      community.docker.docker_volume:
+        name: jenkins_slave_home
+        state: present
+
+    - name: Run jenkins slave and connect to jenkins-master
+      community.docker.docker_container:
+        name: jenkins-slave
+        image: jenkins/inbound-agent:latest
+        state: started
+        env:
+          JENKINS_URL: "http://jenkins-master:8080"
+          JENKINS_AGENT_NAME: "Jenkins-slave"
+          JENKINS_AGENT_WORKDIR: "/home/jenkins/agent"
+          JENKINS_SECRET: "{{ jenkins_agent_secret }}"
+        volumes:
+          - jenkins_slave_home:/home/jenkins/agent
+        networks:
+          - name: my_network

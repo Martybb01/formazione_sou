@@ -1,0 +1,8 @@
+pipeline {
+	agent { label 'Jenkins-slave' }
+	environment {
+		DOCKERHUB_CREDENTIALS = credentials('marboccu_dockerhubid')
+		DOCKERHUB_ACCOUNT = 'marboccu'
+		DOCKERHUB_IMAGE = "${DOCKERHUB_ACCOUNT}/flask-app-example"
+	}
+}

@@ -8,6 +8,7 @@
       ansible.builtin.dnf:
         name:
           - dnf-plugins-core
+          - python3-requests
         state: present
 
     - name: Set up Docker repo

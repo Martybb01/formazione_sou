@@ -19,6 +19,10 @@
         gpgcheck: true
         gpgkey: https://download.docker.com/linux/centos/gpg
         enabled: true
+    
+    - name: Clean DNF cache
+      ansible.builtin.shell:
+        cmd: dnf clean all
 
     - name: Install Docker
       ansible.builtin.dnf:

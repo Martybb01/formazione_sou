@@ -1,8 +1,57 @@
 pipeline {
-	agent { label 'Jenkins-slave' }
+	agent any
 	environment {
 		DOCKERHUB_CREDENTIALS = credentials('marboccu_dockerhubid')
 		DOCKERHUB_ACCOUNT = 'marboccu'
 		DOCKERHUB_IMAGE = "${DOCKERHUB_ACCOUNT}/flask-app-example"
+	}
+	stages {
+		stage('Clone repository') {
+			steps {
+				checkout scm
+				script {
+					env.GIT_COMMIT = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
+					echo "GIT_COMMIT: ${env.GIT_COMMIT}"
+				}
+			}
+		}
+		stage('Set docker tag') {
+			steps {
+				script {
+					def branchName = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    def gitTag = sh(script: "git describe --tags ${env.GIT_COMMIT} || true", returnStdout: true).trim()
+
+					if (gitTag) {
+						env.DOCKER_TAG = gitTag
+					} else if (branchName == 'main') {
+						env.DOCKER_TAG = 'latest'
+					} else if (branchName == 'develop') {
+						env.DOCKER_TAG = "develop-${env.GIT_COMMIT.take(7)}"
+					} else {
+						env.DOCKER_TAG = 'temp'
+					}
+					echo "Docker tag set to: ${env.DOCKER_TAG}"
+				}
+			}
+		}
+		stage('Build and Push docker image') {
+			steps {
+				dir('formazione_sou_k8s') {
+					script {
+						def myImage = docker.build("${DOCKERHUB_IMAGE}:${env.DOCKER_TAG}")
+						docker.withRegistry('', "${DOCKERHUB_CREDENTIALS}") {
+							myImage.push()
+						}
+					}
+				}
+			}
+		}
+	}
+	post {
+		always {
+			script {
+				docker.image("${DOCKERHUB_IMAGE}:${env.DOCKER_TAG}").remove()
+			}
+		}
 	}
 }

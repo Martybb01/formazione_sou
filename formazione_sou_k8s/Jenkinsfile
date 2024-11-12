@@ -47,11 +47,4 @@ pipeline {
 			}
 		}
 	}
-	post {
-		always {
-			script {
-				docker.image("${DOCKERHUB_IMAGE}:${env.DOCKER_TAG}").remove()
-			}
-		}
-	}
 }

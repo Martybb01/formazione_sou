@@ -104,5 +104,6 @@
           JENKINS_SECRET: "{{ jenkins_agent_secret }}"
         volumes:
           - jenkins_slave_home:/home/jenkins/agent
+          - /var/run/docker.sock:/var/run/docker.sock
         networks:
           - name: my_network

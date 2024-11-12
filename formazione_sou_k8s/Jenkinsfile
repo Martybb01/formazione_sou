@@ -1,7 +1,7 @@
 pipeline {
 	agent { label 'slave' }
 	environment {
-		DOCKERHUB_CREDENTIALS = credentials('DockerHub_id')
+		DOCKERHUB_CREDENTIALS = 'DockerHub_id'
 		DOCKERHUB_ACCOUNT = 'marboccu'
 		DOCKERHUB_IMAGE = "${DOCKERHUB_ACCOUNT}/flask-app-example"
 	}
@@ -46,7 +46,7 @@ pipeline {
 				dir('formazione_sou_k8s') {
 					script {
 						def myImage = docker.build("${DOCKERHUB_IMAGE}:${env.DOCKER_TAG}")
-						docker.withRegistry('', "${DOCKERHUB_CREDENTIALS}") {
+						docker.withRegistry('', DOCKERHUB_CREDENTIALS) {
 							myImage.push()
 						}
 					}

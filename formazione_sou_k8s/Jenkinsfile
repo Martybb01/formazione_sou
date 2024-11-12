@@ -43,11 +43,6 @@ pipeline {
 				}
 			}
 		}
-		stage('Cleanup') {
-			steps {
-				sh 'docker rmi ${DOCKERHUB_IMAGE}:${env.DOCKER_TAG} || true'
-			}
-		}
 	}
 	post {
 		always {

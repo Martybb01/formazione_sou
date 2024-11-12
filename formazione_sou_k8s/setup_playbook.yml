@@ -61,6 +61,12 @@
         tag: lts
         source: pull
 
+    - name: Add user to the Docker group on the host
+      ansible.builtin.user:
+        name: jenkins
+        groups: docker
+        append: true
+
     - name: Create Jenkins volume
       community.docker.docker_volume:
         name: jenkins_home
@@ -105,5 +111,12 @@
         volumes:
           - jenkins_slave_home:/home/jenkins/agent
           - /var/run/docker.sock:/var/run/docker.sock
+          - /usr/bin/docker:/usr/bin/docker
         networks:
           - name: my_network
+
+    - name: Add jenkins user to docker group in jenkins-slave container
+      community.docker.docker_container_exec:
+        container: jenkins-slave
+        command: usermod -aG docker jenkins
+        user: root

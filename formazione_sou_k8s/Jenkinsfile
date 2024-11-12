@@ -18,14 +18,14 @@ pipeline {
 		stage('Set docker tag') {
 			steps {
 				script {
-					def branchName = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
-                    def gitTag = sh(script: "git describe --tags ${env.GIT_COMMIT} || true", returnStdout: true).trim()
+					env.BRANCH_NAME = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    env.GIT_TAG	 = sh(script: "git describe --tags --abbrev=0 || true", returnStdout: true).trim()
 
-					if (gitTag) {
-						env.DOCKER_TAG = gitTag
-					} else if (branchName == 'main') {
+					if (env.GIT_TAG) {
+						env.DOCKER_TAG = env.GIT_TAG
+					} else if (env.BRANCH_NAME == 'main') {
 						env.DOCKER_TAG = 'latest'
-					} else if (branchName == 'develop') {
+					} else if (env.BRANCH_NAME == 'develop') {
 						env.DOCKER_TAG = "develop-${env.GIT_COMMIT.take(7)}"
 					} else {
 						env.DOCKER_TAG = 'temp'

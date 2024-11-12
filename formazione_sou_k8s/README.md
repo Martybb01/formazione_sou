@@ -2,8 +2,8 @@
 
 #### in progress... (ci saranno ulteriori step x il deploy con Helm e K8s)
 
-**Per il setup iniziale di Vagrant, Ansible, Docker e i due Jenkins node (master e slave) fare riferimento a [link][Setup]
-[Setup]: https://github.com/Martybb01/formazione_sou/tree/ff4984a7f5cf460a8d4f0ed7ff49c642a5f89947/setup_vagrant%2Bdocker%2Bansible
+**Per il setup iniziale di Vagrant, Ansible, Docker e i due Jenkins node (master e slave) fare riferimento a [Setup iniziale di Vagrant, Ansible, Docker e Jenkins node](https://github.com/Martybb01/formazione_sou/tree/4e9d75bbfd24366d9d26f2ae1b69b90c7c216248/setup_vagrant%2Bdocker%2Bansible)
+
 
 ## Step 2 - Pipeline Jenkins dichiarativa (Groovy) per build immagine Docker
 ##### **obiettivo**: Scrivere pipeline dichiarativa Jenkins che effettui una build dell'immagine Docker e che effettui il push sul proprio account DockerHub. Il tag dell'immagine Docker deve essere uguale al tag git se "buildata" da tag git, latest se "buildata" da branch master, uguale  a "develop + sha comit GIT" se "buildata" da branch develop.

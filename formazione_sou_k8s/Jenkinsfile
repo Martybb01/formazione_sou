@@ -9,24 +9,21 @@ pipeline {
 		stage('Clone repository') {
 			steps {
 				checkout scm
-				script {
-					env.GIT_COMMIT = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
-					echo "GIT_COMMIT: ${env.GIT_COMMIT}"
-				}
 			}
 		}
 		stage('Set docker tag') {
 			steps {
 				script {
-					env.BRANCH_NAME = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
-                    env.GIT_TAG	 = sh(script: "git describe --tags --abbrev=0 || true", returnStdout: true).trim()
+					def branchName = env.BRANCH_NAME
+					def gitCommit = env.GIT_COMMITs.take(7)
+					def gitTag = sh(script: "git describe --tags --abbrev=0 || true", returnStdout: true).trim()
 
-					if (env.GIT_TAG) {
-						env.DOCKER_TAG = env.GIT_TAG
-					} else if (env.BRANCH_NAME == 'main') {
+					if (gitTag) {
+						env.DOCKER_TAG = gitTag
+					} else if (branchName == 'main') {
 						env.DOCKER_TAG = 'latest'
-					} else if (env.BRANCH_NAME == 'develop') {
-						env.DOCKER_TAG = "develop-${env.GIT_COMMIT.take(7)}"
+					} else if (branchName == 'develop') {
+						env.DOCKER_TAG = "develop-${gitCommit}"
 					} else {
 						env.DOCKER_TAG = 'temp'
 					}

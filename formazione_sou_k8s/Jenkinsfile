@@ -15,13 +15,6 @@ pipeline {
 				}
 			}
 		}
-		stage('Debug Credentials') {
-            steps {
-                script {
-                    echo "Using DockerHub credentials: ${DOCKERHUB_CREDENTIALS_USR}"
-                }
-            }
-        }
 		stage('Set docker tag') {
 			steps {
 				script {

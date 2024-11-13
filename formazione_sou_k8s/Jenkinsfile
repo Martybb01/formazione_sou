@@ -39,6 +39,7 @@ pipeline {
 						docker.withRegistry('', DOCKERHUB_CREDENTIALS) {
 							myImage.push()
 						}
+						sh "docker rmi --force ${DOCKERHUB_IMAGE}:${env.DOCKER_TAG}"
 					}
 				}
 			}

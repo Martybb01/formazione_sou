@@ -33,7 +33,7 @@ pipeline {
 		}
 		stage('Build and Push docker image') {
 			steps {
-				dir('formazione_sou_k8s') {
+				dir('formazione_sou_k8s/flask-app') {
 					script {
 						def myImage = docker.build("${DOCKERHUB_IMAGE}:${env.DOCKER_TAG}")
 						docker.withRegistry('', DOCKERHUB_CREDENTIALS) {

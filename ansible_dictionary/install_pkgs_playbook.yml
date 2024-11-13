@@ -1,0 +1,26 @@
+- name: Gestione pacchetti da dictionary
+  hosts: all
+  become: true
+  vars:
+    packages:
+      install:
+        - name: vim
+        - name: curl
+      uninstall:
+        - name: nano
+        - name: wget
+
+  tasks:
+    - name: Installazione pacchetti
+      ansible.builtin.package:
+        name: "{{ item.name }}"
+        state: present
+      loop: "{{ packages.install }}"
+      when: packages.install is defined and packages.install | length > 0
+
+    - name: Rimozione pacchetti
+      ansible.builtin.package:
+        name: "{{ item.name }}"
+        state: absent
+      loop: "{{ packages.uninstall }}"
+      when: packages.uninstall is defined and packages.uninstall | length > 0

@@ -6,7 +6,7 @@
 
 
 ## Step 2 - Pipeline Jenkins dichiarativa (Groovy) per build immagine Docker
-##### **obiettivo**: Scrivere pipeline dichiarativa Jenkins che effettui una build dell'immagine Docker e che effettui il push sul proprio account DockerHub. Il tag dell'immagine Docker deve essere uguale al tag git se "buildata" da tag git, latest se "buildata" da branch master, uguale  a "develop + sha comit GIT" se "buildata" da branch develop.
+##### **Obiettivo**: Scrivere pipeline dichiarativa Jenkins che effettui una build dell'immagine Docker e che effettui il push sul proprio account DockerHub. Il tag dell'immagine Docker deve essere uguale al tag git se "buildata" da tag git, latest se "buildata" da branch master, uguale  a "develop + sha comit GIT" se "buildata" da branch develop.
 
 Inanzitutto ho creato una Dockerfile per una semplice app in Flask che espone una pagina con la classica stringa 'Hello, World!'.
 L'obiettivo è proprio quello di scrivere una pipeline dichiarativa Jenkins per buildare l'immagine dell'app e pusharla sul proprio account DockerHub.
@@ -22,3 +22,6 @@ Inoltre, ho implementato una nuova task che aggiunge l'utente jenkins al gruppo 
 * Aggiunte le credenziali DockerHub (global) su Jenkins accedendo da web browser (http://localhost:8081)
 * Configurato la pipeline come multibranch pipeline affinchè rilevi automaticamente i branch presenti nella repo. Particolarmente utile nel mio caso per usare le variabili d'ambiente `env.GIT_BRANCH` e `env.GIT_COMMIT`per impostare dinamicamente i tag Docker.
 * Installato il plugin **Docker pipeline** per poter usare i metodi `docker.build` e `docker.withRegistry`
+
+## Step 3 - Helm Chart custom
+##### **Obiettivo**: creare un Helm chart custom che effettui il deploy dell'immagine creata tramite la pipeline flask-app-example-build (in input deve essere possibile specificare quale tag rilasciare)

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: '{{ include "flask-app.fullname" . }}-test-connection'
+  labels:
+    app: {{ include "flask-app.name" . }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['-qO-', '{{ include "flask-app.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
+

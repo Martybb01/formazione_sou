@@ -9,6 +9,7 @@
         name:
           - dnf-plugins-core
           - python3-requests
+          - git
         state: present
 
     - name: Set up Docker repo
@@ -53,6 +54,36 @@
         ipam_config:
           - subnet: "192.168.100.0/24"
             gateway: "192.168.100.1"
+
+    - name: Download and install K3s
+      ansible.builtin.shell:
+        cmd: "curl -sfL https://get.k3s.io | sh -"
+        creates: /usr/local/bin/k3s
+
+    - name: Ensure .kube directory exists
+      ansible.builtin.file:
+        path: /home/vagrant/.kube
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: '0755'
+    
+    - name: Copy kubeconfig to default location
+      ansible.builtin.copy:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: /home/vagrant/.kube/config
+        remote_src: true
+        owner: vagrant
+        group: vagrant
+        mode: '0600'
+    
+    - name: Set KUBECONFIG environment variable
+      ansible.builtin.shell:
+        cmd: "export KUBECONFIG=/home/vagrant/.kube/config"
+    
+    - name: Create namespace for K8s
+      ansible.builtin.shell:
+        cmd: "/usr/local/bin/kubectl create namespace formazione-sou --kubeconfig /home/vagrant/.kube/config"
 
     - name: Install Jenkins
       community.docker.docker_image:
@@ -114,3 +145,16 @@
         container: jenkins-slave
         command: usermod -aG docker jenkins
         user: root
+
+    - name: Copy kubeconfig to jenkins-slave container
+      ansible.builtin.copy:
+        src: /home/vagrant/.kube/config
+        dest: /home/jenkins/agent
+        remote_src: true
+        owner: jenkins
+        group: jenkins
+        mode: '0600'
+
+    - name: Set KUBECONFIG environment variable
+      ansible.builtin.shell:
+        cmd: echo "export KUBECONFIG=/home/vagrant/.kube/config" >> /home/vagrant/.bashrc && echo "export KUBECONFIG=/home/jenkins/agent" >> /home/jenkins/.bashrc

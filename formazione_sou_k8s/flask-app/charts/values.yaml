@@ -2,6 +2,7 @@ image:
   repository: marboccu/flask-app-example
   pullPolicy: IfNotPresent
   tag: "latest"
+  name: flask-app
 
 service:
   type: ClusterIP

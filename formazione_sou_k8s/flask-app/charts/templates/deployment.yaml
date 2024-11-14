@@ -1,18 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "flask-app.fullname" . }}
+  name: {{ .Values.image.name }}
   labels:
-    app: {{ include "flask-app.name" . }}
+    app: {{ .Values.image.name }}
 spec:
-  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "flask-app.name" . }}
+      app: {{ .Values.image.name }}
   template:
     metadata:
       labels:
-         app: {{ include "flask-app.name" . }}
+         app: {{ .Values.image.name }}
     spec:
       containers:
         - name: flask-app

@@ -56,7 +56,8 @@ Ho creato 3 tasks ansible per garantire che Jenkins abbia le configurazioni nece
 * **2° task** --> modifica il file kubeconfig per puntare all'IP corretto del server API di kubernetes. Di default infatti è localhost (127.0.0.1), ma questo non è raggiungibile dal container jenkins a causa dell'isolamento di rete di Docker
 * **3° task** --> copia il file kubeconfig nella directory creata al 1° task per permettere a Jenkins di usare `kubectl` per interagire con il cluster
 
-to-do:
-- dividere le due pipeline jenkins.build e jenkins.deploy e configurare da browser.
-- scrivere pipeline che effettui deploy automatico
-- N.B. DEVI POTER SPECIFICARE QUALE TAG RILASCIARE IN INPUT!
+### Pipeline (Jenkinsfile.deploy)
+Da web browser ho configurato una nuova multibranch pipeline in modo analogo alla prima specificando come script path il Jenkinsfile di deploy --> disinstalla precedenti versioni deployate dell'app ed effettua un `helm install` con la possibilità di specificare dinamicamente quale versione dell'app deployare in base al tag Docker dell'immagine.
+
+## Step 5 - Check Deployment Best Practices
+#### **Obiettivo:** Scrivere script Bash o Python che effettui le seguenti operazioni: Autenticandosi tramite un Service Account di tipo "cluster-reader" esegua un export del Deployment dell'applicazione Flask installata. E' possibile scegliere tra: utilizzo API k8s, wrapping di curl. L'automatismo deve ritornare un errore se non presenti nel Deployment i seguenti attributi: Readiness e Liveness Probles, Limits e Requests

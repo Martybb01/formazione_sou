@@ -29,7 +29,10 @@ pipeline {
 			steps {
 				dir('formazione_sou_k8s/flask-app/charts') {
 					script {
-						sh 'helm install my-app . --namespace ${KUB_NAMESPACE} --set image.tag=${params.TAG} --debug'
+						sh '''
+						#!/bin/bash
+						helm install my-app . --namespace ${KUB_NAMESPACE} --set image.tag=${TAG} --debug
+						'''
 					}
 				}
 			}

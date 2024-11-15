@@ -1,7 +1,7 @@
 image:
   repository: marboccu/flask-app-example
   pullPolicy: Always
-  tag: "latest"
+  tag: latest
   name: flask-app
 
 service:

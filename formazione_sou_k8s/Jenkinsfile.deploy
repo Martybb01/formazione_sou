@@ -18,7 +18,7 @@ pipeline {
 					def helmRelease = sh(script: 'helm list --namespace ${KUB_NAMESPACE} --short', returnStdout: true).trim()
 					if (helmRelease) {
 						echo "Uninstalling previous helm release..."
-						sh 'helm uninstall my-app --namespace ${KUB_NAMESPACE} --set image.tag=${params.TAG} --debug'
+						sh 'helm uninstall my-app --namespace ${KUB_NAMESPACE} --debug'
 					} else {
 						echo 'No previous helm release found'
 					}
@@ -29,7 +29,7 @@ pipeline {
 			steps {
 				dir('formazione_sou_k8s/flask-app/charts') {
 					script {
-						sh 'helm install my-app . --namespace ${KUB_NAMESPACE} --debug'
+						sh 'helm install my-app . --namespace ${KUB_NAMESPACE} --set image.tag=${params.TAG} --debug'
 					}
 				}
 			}

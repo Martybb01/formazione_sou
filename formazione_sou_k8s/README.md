@@ -27,6 +27,7 @@ Inoltre, ho implementato una nuova task che aggiunge l'utente jenkins al gruppo 
 ##### **Obiettivo:** creare un Helm chart custom che effettui il deploy dell'immagine creata tramite la pipeline flask-app-example-build (in input deve essere possibile specificare quale tag rilasciare)
 
 **Helm è un tool per gestire pacchetti Kubernetes, chiamati charts**
+
 Per il deploy con Helm ho creato prima di tutto la subdir charts tramite il comando `helm create charts`, pulendola poi da vari file e folder che vengono inizializzati di default ma non necessari nel mio caso.
 * `values.yaml` --> contiene le configurazioni di default che possono essere personalizzate al momento del deploy dell'Helm chart. In particolare definisce l'immagine Docker, le configurazioni delle risorse e i dettagli delle probe di liveness e readiness.
 * `deployment.yaml` --> utilizza i valori definiti in values.yaml per creare un deployment Kubernetes.

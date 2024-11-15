@@ -1,16 +1,26 @@
 pipeline {
 	agent { label 'master' }
+	environment {
+		KUB_NAMESPACE = 'formazione-sou'
+	}
 	stages {
 		stage('Clone repository') {
 			steps {
 				checkout scm
 			}
 		}
+		stage('Clean previous helm release') {
+			steps {
+				script {
+					sh 'helm uninstall my-app --namespace ${KUB_NAMESPACE} --debug'
+				}
+			}
+		}
 		stage('Helm install') {
 			steps {
 				dir('formazione_sou_k8s/flask-app/charts') {
 					script {
-						sh 'helm install my-app . --debug'
+						sh 'helm install my-app . --namespace ${KUB_NAMESPACE} --debug'
 					}
 				}
 			}

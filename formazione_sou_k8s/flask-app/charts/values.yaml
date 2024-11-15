@@ -1,6 +1,6 @@
 image:
   repository: marboccu/flask-app-example
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: "latest"
   name: flask-app
 

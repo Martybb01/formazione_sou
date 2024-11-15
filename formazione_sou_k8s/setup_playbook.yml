@@ -1,4 +1,4 @@
-- name: Configure Docker, create Network and Install Jenkins
+- name: Configure and Install Docker, K8s and Jenkins
   hosts: all
   become: true
   vars_files:
@@ -9,7 +9,6 @@
         name:
           - dnf-plugins-core
           - python3-requests
-          - git
         state: present
 
     - name: Set up Docker repo
@@ -83,7 +82,7 @@
     
     - name: Create namespace for K8s
       ansible.builtin.shell:
-        cmd: "/usr/local/bin/kubectl create namespace formazione-sou --kubeconfig /home/vagrant/.kube/config"
+        cmd: "/usr/local/bin/kubectl get namespace formazione-sou --kubeconfig /home/vagrant/.kube/config || /usr/local/bin/kubectl create namespace formazione-sou --kubeconfig /home/vagrant/.kube/config"
 
     - name: Install Jenkins
       community.docker.docker_image:
@@ -111,6 +110,24 @@
             ipv4_address: 192.168.100.44
         volumes:
           - jenkins_home:/var/jenkins_home
+
+    - name: Download Helm binary
+      community.docker.docker_container_exec:
+        container: jenkins-master
+        user: jenkins
+        command: "curl -fsSL -o /var/jenkins_home/helm.tar.gz https://get.helm.sh/helm-v3.16.3-linux-amd64.tar.gz"
+
+    - name: Extract Helm binary
+      community.docker.docker_container_exec:
+        container: jenkins-master
+        user: jenkins
+        command: "tar -xzf /var/jenkins_home/helm.tar.gz -C /var/jenkins_home --strip-components=1 linux-amd64/helm"
+
+    - name: Move Helm binary to /usr/local/bin
+      community.docker.docker_container_exec:
+        container: jenkins-master
+        user: root
+        command: "/bin/sh -c 'mv /var/jenkins_home/helm /usr/local/bin/helm && chmod +x /usr/local/bin/helm'"
 
     - name: Pull Jenkins agent image
       community.docker.docker_image:
@@ -145,16 +162,3 @@
         container: jenkins-slave
         command: usermod -aG docker jenkins
         user: root
-
-    - name: Copy kubeconfig to jenkins-slave container
-      ansible.builtin.copy:
-        src: /home/vagrant/.kube/config
-        dest: /home/jenkins/agent
-        remote_src: true
-        owner: jenkins
-        group: jenkins
-        mode: '0600'
-
-    - name: Set KUBECONFIG environment variable
-      ansible.builtin.shell:
-        cmd: echo "export KUBECONFIG=/home/vagrant/.kube/config" >> /home/vagrant/.bashrc && echo "export KUBECONFIG=/home/jenkins/agent" >> /home/jenkins/.bashrc

@@ -11,7 +11,7 @@ spec:
   template:
     metadata:
       labels:
-         app: {{ .Values.image.name }}
+          app: {{ .Values.image.name }}
     spec:
       containers:
         - name: flask-app

@@ -24,4 +24,14 @@ Inoltre, ho implementato una nuova task che aggiunge l'utente jenkins al gruppo 
 * Installato il plugin **Docker pipeline** per poter usare i metodi `docker.build` e `docker.withRegistry`
 
 ## Step 3 - Helm Chart custom
-##### **Obiettivo**: creare un Helm chart custom che effettui il deploy dell'immagine creata tramite la pipeline flask-app-example-build (in input deve essere possibile specificare quale tag rilasciare)
+##### **Obiettivo:** creare un Helm chart custom che effettui il deploy dell'immagine creata tramite la pipeline flask-app-example-build (in input deve essere possibile specificare quale tag rilasciare)
+
+**Helm è un tool per gestire pacchetti Kubernetes, chiamati charts**
+Per il deploy con Helm ho creato prima di tutto la subdir charts tramite il comando `helm create charts`, pulendola poi da vari file e folder che vengono inizializzati di default ma non necessari nel mio caso.
+* `values.yaml` --> contiene le configurazioni di default che possono essere personalizzate al momento del deploy dell'Helm chart. In particolare definisce l'immagine Docker, le configurazioni delle risorse e i dettagli delle probe di liveness e readiness.
+* `deployment.yaml` --> utilizza i valori definiti in values.yaml per creare un deployment Kubernetes.
+* `service.yaml` --> definisce un oggetto di tipo Service in Kubernetes che serve per esporre i pods al traffico interno del cluster. Per adesso è configurato come ClusterIP, ciò significa che il servizio è raggiungibile solo all'interno del cluster (modificabile in futuro x permettere accesso esterno).
+
+## Step 4 - Setup K8s and Helm install
+#### **Obiettivo:** Scrivere pipeline dichiarativa Jenkins che prenda da GIT il repo chart versionato in "formazione_sou/formazione_sou_k8s" ed effettui "helm install" sull'instanza K8s locale su namespace "formazione-sou".
+

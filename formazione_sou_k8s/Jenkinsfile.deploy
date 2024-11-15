@@ -12,7 +12,13 @@ pipeline {
 		stage('Clean previous helm release') {
 			steps {
 				script {
-					sh 'helm uninstall my-app --namespace ${KUB_NAMESPACE} --debug'
+					def helmRelease = sh(script: 'helm list --namespace ${KUB_NAMESPACE} --short', returnStdout: true).trim()
+					if (helmRelease) {
+						echo "Uninstalling previous helm release..."
+						sh 'helm uninstall my-app --namespace ${KUB_NAMESPACE} --debug'
+					} else {
+						echo 'No previous helm release found'
+					}
 				}
 			}
 		}

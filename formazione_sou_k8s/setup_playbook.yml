@@ -128,6 +128,24 @@
         container: jenkins-master
         user: root
         command: "/bin/sh -c 'mv /var/jenkins_home/helm /usr/local/bin/helm && chmod +x /usr/local/bin/helm'"
+    
+    - name: Create .kube dir in jenkins\_home
+      community.docker.docker_container_exec:
+        container: jenkins-master
+        user: jenkins
+        command: mkdir -p /var/jenkins\_home/.kube
+    
+    - name: Update kubeconfig to use forward IP
+      ansible.builtin.replace:
+        path: /home/vagrant/.kube/config
+        regexp: 'server: https://127\.0\.0\.1:6443'
+        replace: 'server: https://10.0.2.15:6443'
+      become: true
+    
+    - name: Copy kubeconfig to Jenkins container
+      ansible.builtin.command:
+        cmd:  docker cp /home/vagrant/.kube/config jenkins-master:/var/jenkins\_home/.kube/config
+      become: true
 
     - name: Pull Jenkins agent image
       community.docker.docker_image:

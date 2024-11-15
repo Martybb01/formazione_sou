@@ -5,6 +5,13 @@ Vagrant.configure("2") do |config|
 
     node.vm.network "private_network", ip: "192.168.10.10", netmask: "255.255.255.0"
     node.vm.network "forwarded_port", guest: 8080, host: 8081
+    
+    node.vm.provision "shell", inline: <<-SHELL
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+    iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -d 10.0.2.0/24 -j MASQUERADE
+    iptables -A FORWARD -s 192.168.100.0/24 -d 10.0.2.15 -p tcp --dport 6443 -j ACCEPT
+    iptables -A FORWARD -d 192.168.100.0/24 -s 10.0.2.15 -p tcp --sport 6443 -j ACCEPT
+    SHELL
 
     node.vm.provision "ansible" do |ansible|
       ansible.playbook = "setup_playbook.yml"

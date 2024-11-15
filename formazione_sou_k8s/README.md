@@ -36,3 +36,27 @@ Per il deploy con Helm ho creato prima di tutto la subdir charts tramite il coma
 ## Step 4 - Setup K8s and Helm install
 #### **Obiettivo:** Scrivere pipeline dichiarativa Jenkins che prenda da GIT il repo chart versionato in "formazione_sou/formazione_sou_k8s" ed effettui "helm install" sull'instanza K8s locale su namespace "formazione-sou".
 
+### Installazione k3s su VM:
+* Installazione K3s tramite Ansible task --> distribuzione Kubernetes più leggera e perfetta per il mio scopo.
+* Tasks ansible per: 
+	* Creare la directory .kube nella home dell'utente vagrant
+	* Copiare dentro la directory creata il kubeconfig di k3s, che contiene tutte le info necessarie per connettersi al cluster Kubernetes 
+	* Settare la variabile d'ambiente `KUBECONFIG` di modo che il comando kubectl punti al cluster corretto
+* Creazione del namespace formazione-sou all'interno del cluster se non esiste già
+
+### Intallazione Helm su jenkins-master:
+Ho installato Helm sul nodo jenkins-master tramite Binary release e per farlo ho configurato tre tasks: 
+* 1° task --> esegue il download del pacchetto tar di Helm 
+* 2° task --> estrae il binary di Helm dal file `helm.tar.gz` direttamente nella directory `/var/jenkins_home` 
+* 3° task --> sposta il binary all'interno di `/usr/local/bin` e lo rende eseguibile
+
+### Configurare ambiente Jenkins affinchè interagisca con il cluster K8s:
+Ho creato 3 tasks ansible per garantire che Jenkins abbia le configurazioni necessarie per gestire le risorse Kubernetes:
+* 1° task --> crea la directory `.kube` all'interno della home di jenkins-master
+* 2° task --> modifica il file kubeconfig per puntare all'IP corretto del server API di kubernetes. Di default infatti è localhost (127.0.0.1), ma questo non è raggiungibile dal container jenkins a causa dell'isolamento di rete di Docker
+* 3° task --> copia il file kubeconfig nella directory creata al 1° task per permettere a Jenkins di usare `kubectl` per interagire con il cluster
+
+to-do:
+- dividere le due pipeline jenkins.build e jenkins.deploy e configurare da browser.
+- scrivere pipeline che effettui deploy automatico
+- N.B. DEVI POTER SPECIFICARE QUALE TAG RILASCIARE IN INPUT!

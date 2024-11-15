@@ -77,8 +77,10 @@
         mode: '0600'
     
     - name: Set KUBECONFIG environment variable
-      ansible.builtin.shell:
-        cmd: "export KUBECONFIG=/home/vagrant/.kube/config"
+      ansible.builtin.lineinfile:
+        path: /home/vagrant/.bashrc
+        line: export KUBECONFIG=/home/vagrant/.kube/config
+        create: yes
     
     - name: Create namespace for K8s
       ansible.builtin.shell:
@@ -129,7 +131,7 @@
         user: root
         command: "/bin/sh -c 'mv /var/jenkins_home/helm /usr/local/bin/helm && chmod +x /usr/local/bin/helm'"
     
-    - name: Create .kube dir in jenkins\_home
+    - name: Create .kube dir in jenkins_home
       community.docker.docker_container_exec:
         container: jenkins-master
         user: jenkins

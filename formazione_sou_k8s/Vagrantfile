@@ -7,8 +7,11 @@ Vagrant.configure("2") do |config|
     node.vm.network "forwarded_port", guest: 8080, host: 8081
     
     node.vm.provision "shell", inline: <<-SHELL
+    # Abilito il forwarding sulla VM 
     echo 1 > /proc/sys/net/ipv4/ip_forward
+    # regola NAT che maschera l'IP del traffico in uscita da rete Docker quando destinato a subnet
     iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -d 10.0.2.0/24 -j MASQUERADE
+    # configuro il forwarding del traffico verso e dalla porta 6443, usata dall'API di kub 
     iptables -A FORWARD -s 192.168.100.0/24 -d 10.0.2.15 -p tcp --dport 6443 -j ACCEPT
     iptables -A FORWARD -d 192.168.100.0/24 -s 10.0.2.15 -p tcp --sport 6443 -j ACCEPT
     SHELL

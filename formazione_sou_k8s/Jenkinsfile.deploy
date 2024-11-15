@@ -1,0 +1,25 @@
+pipeline {
+	agent { label 'master' }
+	stages {
+		stage('Clone repository') {
+			steps {
+				checkout scm
+			}
+		}
+		stage('Helm install') {
+			steps {
+				dir('formazione_sou_k8s/flask-app/charts') {
+					script {
+						sh 'helm install my-app . --debug'
+					}
+				}
+			}
+		}
+	}
+	post {
+		always {
+			echo 'Cleaning up workspace'
+			cleanWs()
+		}
+	}
+}

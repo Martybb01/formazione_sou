@@ -8,10 +8,11 @@ service:
   type: ClusterIP
   port: 8000
 
+namespace: formazione-sou
+
 serviceAccount:
   create: true
   name: cluster-reader
-  namespace: formazione-sou
 
 resources:
   limits:

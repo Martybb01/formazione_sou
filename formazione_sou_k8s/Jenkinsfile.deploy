@@ -37,18 +37,18 @@ pipeline {
 				}
 			}
 		}
-		stage('Export deployment') {
-			steps {
-				script {
-					sh '''
-					#!/bin/bash
-					ssh -i /var/jenkins_home/.ssh/id_rsa -o StrictHostKeyChecking=no vagrant@192.168.10.10
-					chmod +x export-deployment.sh
-					./export-deployment.sh
-					'''
-				}
-			}
-		}
+		// stage('Export deployment') {
+		// 	steps {
+		// 		script {
+		// 			sh '''
+		// 			#!/bin/bash
+		// 			ssh -i /var/jenkins_home/.ssh/id_rsa -o StrictHostKeyChecking=no vagrant@192.168.10.10
+		// 			chmod +x export-deployment.sh
+		// 			./export-deployment.sh
+		// 			'''
+		// 		}
+		// 	}
+		// }
 	}
 	post {
 		always {

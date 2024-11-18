@@ -8,6 +8,11 @@ service:
   type: ClusterIP
   port: 8000
 
+serviceAccount:
+  create: true
+  name: cluster-reader
+  namespace: formazione-sou
+
 resources:
   limits:
     cpu: 500m

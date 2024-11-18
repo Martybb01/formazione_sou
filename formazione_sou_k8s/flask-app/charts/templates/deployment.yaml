@@ -13,6 +13,7 @@ spec:
       labels:
           app: {{ .Values.image.name }}
     spec:
+      serviceAccountName: cluster-reader
       containers:
         - name: flask-app
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

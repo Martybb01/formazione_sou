@@ -2,6 +2,8 @@ pipeline {
 	agent { label 'master' }
 	environment {
 		KUB_NAMESPACE = 'formazione-sou'
+		SCRIPT_PATH='/home/vagrant/export-deployment.sh'
+		KEY_PATH='/var/jenkins_home/.ssh/id_rsa'
 	}
 	parameters {
 		string(name: 'TAG', defaultValue: 'latest', description: 'Docker image tag')
@@ -42,7 +44,7 @@ pipeline {
 				script {
 					sh '''
 					#!/bin/bash
-					ssh -t -i /var/jenkins_home/.ssh/id_rsa -o StrictHostKeyChecking=no vagrant@192.168.10.10 && chmod +x /home/vagrant/export-deployment.sh && bash /home/vagrant/export-deployment.sh
+					ssh -T -i ${KEY_PATH} -o StrictHostKeyChecking=no vagrant@192.168.10.10 "chmod +x ${SCRIPT_PATH} && bash ${SCRIPT_PATH}"
 					'''
 				}
 			}

@@ -149,6 +149,17 @@
         cmd:  docker cp /home/vagrant/.kube/config jenkins-master:/var/jenkins\_home/.kube/config
       become: true
 
+    - name: Copy ssh_key to Jenkins container
+      ansible.builtin.command:
+        cmd:  docker cp /home/vagrant/.ssh/id_rsa jenkins-master:/var/jenkins\_home/.ssh/id_rsa
+      become: true
+    
+    - name: Set permission for ssh_key
+      community.docker.docker_container_exec:
+        container: jenkins-master
+        user: root
+        command: chmod 600 /var/jenkins\_home/.ssh/id_rsa
+
     - name: Pull Jenkins agent image
       community.docker.docker_image:
         name: jenkins/inbound-agent

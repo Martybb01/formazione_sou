@@ -4,6 +4,7 @@ pipeline {
 		KUB_NAMESPACE = 'formazione-sou'
 		SCRIPT_PATH='/home/vagrant/export-deployment.sh'
 		KEY_PATH='/var/jenkins_home/.ssh/id_rsa'
+		HOST='formazionesou.local'
 	}
 	parameters {
 		string(name: 'TAG', defaultValue: 'latest', description: 'Docker image tag')
@@ -14,26 +15,14 @@ pipeline {
 				checkout scm
 			}
 		}
-		stage('Clean previous helm release') {
-			steps {
-				script {
-					def helmRelease = sh(script: 'helm list --namespace ${KUB_NAMESPACE} --short', returnStdout: true).trim()
-					if (helmRelease) {
-						echo "Uninstalling previous helm release..."
-						sh 'helm uninstall my-app --namespace ${KUB_NAMESPACE} --debug'
-					} else {
-						echo 'No previous helm release found'
-					}
-				}
-			}
-		}
-		stage('Helm install') {
+		stage('Helm update dependencies and Helm install') {
 			steps {
 				dir('formazione_sou_k8s/flask-app/charts') {
 					script {
 						sh '''
 						#!/bin/bash
-						helm install my-app . --namespace ${KUB_NAMESPACE} --set image.tag=${TAG} --debug
+						helm dependency update my-app .
+						helm upgrade --install my-app . --namespace ${KUB_NAMESPACE} --set image.tag=${TAG} --set ingress.host=${HOST} --debug
 						'''
 					}
 				}

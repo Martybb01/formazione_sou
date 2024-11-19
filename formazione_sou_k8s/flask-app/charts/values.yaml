@@ -20,7 +20,7 @@ ingress:
   name: flask-ingress
   host: formazionesou.local
   serviceName: flask-app
-  servicePort: 8000
+  servicePort: 80
 
 resources:
   limits:

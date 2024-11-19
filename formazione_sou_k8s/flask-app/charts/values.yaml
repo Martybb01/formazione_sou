@@ -16,6 +16,7 @@ serviceAccount:
 
 ingress:
   enabled: true
+  className: nginx
   name: flask-ingress
   host: formazionesou.local
   serviceName: flask-app

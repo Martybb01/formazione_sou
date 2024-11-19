@@ -24,15 +24,20 @@ pipeline {
 				}
 			}
 		}
+		stage('Wait for NGINX to Initialize') {
+            steps {
+                script {
+                    echo "Waiting for NGINX Ingress Controller to initialize..."
+                    sleep 30
+                }
+            }
+        }
 		stage('Helm update dependencies and Helm install') {
 			steps {
 				dir('formazione_sou_k8s/flask-app/charts') {
 					script {
 						sh '''
 						#!/bin/bash
-						export HTTP_NODE_PORT=$(kubectl get service --namespace formazione-sou flask-app-ingress-ingress-nginx-controller --output jsonpath="{.spec.ports[0].nodePort}")
-						export HTTPS_NODE_PORT=$(kubectl get service --namespace formazione-sou flask-app-ingress-ingress-nginx-controller --output jsonpath="{.spec.ports[1].nodePort}")
-						export NODE_IP="$(kubectl get nodes --output jsonpath="{.items[0].status.addresses[1].address}")"
 						helm upgrade --install my-app . --namespace ${KUB_NAMESPACE} --set image.tag=${TAG} --set ingress.host=${HOST} --debug
 						'''
 					}

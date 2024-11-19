@@ -20,9 +20,12 @@ pipeline {
 				script {
 					sh '''
 					#!/bin/bash
+					def installed = sh(script: "kubectl get deployment -n ${NAMESPACE} -l app.kubernetes.io/name=ingress-nginx --ignore-not-found", returnStdout: true).trim()
+					if (installed == '') {
 						helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 						helm repo update
-						helm install my-app ingress-nginx/ingress-nginx --namespace ${KUB_NAMESPACE} --set controller.service.type=NodePort
+						helm install flask-app-ingress ingress-nginx/ingress-nginx --namespace ${KUB_NAMESPACE} --set controller.service.type=NodePort
+					}
 					'''
 				}
 			}

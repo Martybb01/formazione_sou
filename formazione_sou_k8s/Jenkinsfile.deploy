@@ -21,7 +21,7 @@ pipeline {
 					script {
 						sh '''
 						#!/bin/bash
-						helm dependency update my-app .
+						helm dependency update .
 						helm upgrade --install my-app . --namespace ${KUB_NAMESPACE} --set image.tag=${TAG} --set ingress.host=${HOST} --debug
 						'''
 					}

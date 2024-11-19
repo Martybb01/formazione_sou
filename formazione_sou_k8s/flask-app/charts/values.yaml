@@ -14,6 +14,13 @@ serviceAccount:
   create: true
   name: cluster-reader
 
+ingress:
+  enabled: true
+  name: flask-ingress
+  host: formazionesou.local
+  serviceName: flask-app
+  servicePort: 8000
+
 resources:
   limits:
     cpu: 500m

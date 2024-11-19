@@ -61,3 +61,26 @@ Da web browser ho configurato una nuova multibranch pipeline in modo analogo all
 
 ## Step 5 - Check Deployment Best Practices
 #### **Obiettivo:** Scrivere script Bash o Python che effettui le seguenti operazioni: Autenticandosi tramite un Service Account di tipo "cluster-reader" esegua un export del Deployment dell'applicazione Flask installata. E' possibile scegliere tra: utilizzo API k8s, wrapping di curl. L'automatismo deve ritornare un errore se non presenti nel Deployment i seguenti attributi: Readiness e Liveness Probles, Limits e Requests
+
+### Helm chart x ServiceAccount
+Prima di tutto ho creato un nuovo Helm Chart `serviceaccount.yaml` che definisce una configurazione per creare un ServiceAccount chiamato *cluster-reader* che servirà come identità per accedere alle risorse del cluster -->
+* Il ServiceAccount è limitato ai permessi di lettura (watch, get, list) per le risorse specificate all'interno del namespace *formazione-sou* grazie alla definizione di un **Role**.
+* Tale Role viene associato al ServiceAccount tramite un **RoleBinding** che consente al ServiceAccount di usare i permessi definiti dal Role all'interno del namespace.
+* Viene creato un Secret (*cluster-reader-token*) in cui verrà salvato un token di autenticazione generato da Kubernetes che verrà usato dal ServiceAccount per autenticarsi al cluster e al server API Kubernetes, rispettando i permessi RBAC definiti sopra.
+
+### Bash script
+Lo script in Bash automatizza l'esportazione e la validazione di un deployment Kubernetes:
+* Estrae il token dal Secret creato in precedenza e recupera l'indirizzo del server API e il certificato di autorità, fondamentali per stabilire una connessione sicura e autorizzata al server API:
+	* Il *TOKEN* viene incluso nell'header della richiesta HTTP per dimostrare che il ServiceAccount ha i permessi definiti in RBAC.
+	* Il *CA_CERT* verifica che la connessione al server API sia sicura e che il certificato sia autentico
+	* Il *SERVER_API* garantisce che la richiesta venga inviata al server corretto
+* Usa `kubectl wait` per verificare che il deployment dell'app nel namespace diventi disponibile entro un tempo limite (40s).
+* Ottiene il manifest YAML del deployment dell'app con `kubectl get deployment` e lo salva localmente sulla VM.
+* Controlla che il manifest esportato contenga gli attributi richiesti, altrimenti ritorna errore ed esce
+
+### Integrazione con Jenkins pipeline
+Per consentire che la pipeline abbia successo, come operazioni preliminari ho caricato lo script Bash sull VM da cui verrà eseguito e, dopo aver fatto la stessa cosa anche con la ssh_private_key, ho creato due tasks ansible per copiarla nel nodo Jenkins e settare i permessi.
+Infine ho creato un nuovo stage **export deployment** nella pipeline che utilizza `ssh` per collegarsi al server remoto (VM vagrant) e, autenticandosi come utente *vagrant* grazie alla chiave privata, rende eseguibile ed esegue lo script *export-deployment.sh*.
+
+## Step 6 - BONUS ingress
+#### **Obiettivo:** Equipaggiare l'istanza Kubernetes di un Ingress Controller Nginx. Fare in modo che l'Helm Chart installi anche l'ingress nginx e fare in modo che, chiamando via http http://formazionesou.local, si ottenga quanto esposto dall'applicazione Flask creata nei punti precedenti.

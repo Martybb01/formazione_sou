@@ -18,7 +18,7 @@ pipeline {
 		stage('Install nginx Ingress controller') {
 			steps {
 				script {
-					def installed = sh(script: "kubectl get deployment -n ${NAMESPACE} -l app.kubernetes.io/name=ingress-nginx --ignore-not-found", returnStdout: true).trim()
+					def installed = sh(script: "kubectl get deployment -n ${KUB_NAMESPACE} -l app.kubernetes.io/name=ingress-nginx --ignore-not-found", returnStdout: true).trim()
 					if (installed == '') {
 						sh(script: "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx") 
 						sh(script: "helm repo update")

@@ -8,6 +8,7 @@
       ansible.builtin.dnf:
         name:
           - dnf-plugins-core
+          - epel-release
           - python3-requests
         state: present
 
@@ -30,6 +31,7 @@
           - docker-ce
           - docker-ce-cli
           - containerd.io
+          - python3-kubernetes
         state: present
         update_cache: true
 
@@ -83,8 +85,12 @@
         create: yes
     
     - name: Create namespace for K8s
-      ansible.builtin.shell:
-        cmd: "/usr/local/bin/kubectl get namespace formazione-sou --kubeconfig /home/vagrant/.kube/config || /usr/local/bin/kubectl create namespace formazione-sou --kubeconfig /home/vagrant/.kube/config"
+      kubernetes.core.k8s:
+        kubeconfig: /home/vagrant/.kube/config
+        state: present
+        name: formazione-sou
+        api_version: v1
+        kind: Namespace
 
     - name: Install Jenkins
       community.docker.docker_image:

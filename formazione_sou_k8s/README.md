@@ -80,6 +80,7 @@ Lo script in Bash automatizza l'esportazione e la validazione di un deployment K
 
 ### Integrazione con Jenkins pipeline
 Per consentire che la pipeline abbia successo, come operazioni preliminari ho caricato lo script Bash sull VM da cui verrà eseguito e, dopo aver fatto la stessa cosa anche con la ssh_private_key, ho creato due tasks ansible per copiarla nel nodo Jenkins e settare i permessi.
+
 Infine ho creato un nuovo stage **export deployment** nella pipeline che utilizza `ssh` per collegarsi al server remoto (VM vagrant) e, autenticandosi come utente *vagrant* grazie alla chiave privata, rende eseguibile ed esegue lo script *export-deployment.sh*.
 
 ## Step 6 - BONUS ingress

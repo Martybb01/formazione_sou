@@ -3,7 +3,10 @@ kind: Ingress
 metadata:
   name: {{ .Values.ingress.name }}
   namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: ingress-nginx
 spec:
+  ingressClassName: nginx
   rules:
   - host: {{ .Values.ingress.host }}
     http:

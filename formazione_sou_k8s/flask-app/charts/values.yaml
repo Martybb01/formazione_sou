@@ -6,8 +6,10 @@ image:
 
 service:
   type: ClusterIP
-  port: 8000
-  targetPort: 8000
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
 
 namespace: formazione-sou
 
@@ -19,6 +21,8 @@ ingress:
   enabled: true
   className: nginx
   name: flask-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
   host: formazionesou.local
   serviceName: flask-app
   servicePort: 8000

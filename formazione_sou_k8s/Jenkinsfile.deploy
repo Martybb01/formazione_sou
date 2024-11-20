@@ -59,7 +59,7 @@ pipeline {
 				script {
 					sh '''
 					#!/bin/bash
-					ssh -T -i ${KEY_PATH} -o StrictHostKeyChecking=no vagrant@192.168.10.10 "NODE_IP=$(kubectl get service flask-service -n formazione-sou -o jsonpath='{.spec.clusterIP}') && echo ${NODE_IP} ${HOST} | sudo tee -a /etc/hosts"
+					ssh -T -i ${KEY_PATH} -o StrictHostKeyChecking=no vagrant@192.168.10.10 'NODE_IP=$(kubectl get service flask-service -n formazione-sou -o jsonpath="{.spec.clusterIP}") && echo "${NODE_IP} ${HOST}" | sudo tee -a /etc/hosts'
 					'''
 				}
 			}

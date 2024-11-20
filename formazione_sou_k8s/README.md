@@ -1,7 +1,5 @@
 # Jenkins pipeline to build and push Docker image on DockerHub
 
-#### in progress... (ci saranno ulteriori step x il deploy con Helm e K8s)
-
 **Per il setup iniziale di Vagrant, Ansible, Docker e i due Jenkins node (master e slave) fare riferimento a [Setup iniziale di Vagrant, Ansible, Docker e Jenkins node](https://github.com/Martybb01/formazione_sou/tree/4e9d75bbfd24366d9d26f2ae1b69b90c7c216248/setup_vagrant%2Bdocker%2Bansible)
 
 
@@ -85,3 +83,48 @@ Infine ho creato un nuovo stage **export deployment** nella pipeline che utilizz
 
 ## Step 6 - BONUS ingress
 #### **Obiettivo:** Equipaggiare l'istanza Kubernetes di un Ingress Controller Nginx. Fare in modo che l'Helm Chart installi anche l'ingress nginx e fare in modo che, chiamando via http http://formazionesou.local, si ottenga quanto esposto dall'applicazione Flask creata nei punti precedenti.
+
+Per prima cosa ho installato tramite Helm l'**nginx controller** e ho creato uno nuovo stage sulla pipeline di deploy a tale scopo --> è un componente essenziale perchè interpeta le regole definite negli oggetti Ingress e le implementa. 
+
+<ins>Una volta che il controller è installato vengono creati i seguenti servizi:<ins>
+* `flask-app-ingress-ingress-nginx-controller (NodePort)` --> Espone il controller verso l'esterno
+* `flask-app-ingress-ingress-nginx-controller-admission (ClusterIP)` --> Usato internamente per la gestione del controller
+
+<ins>Ho poi creato un **oggetto Ingress** tramite helm chart che definisce le regole per il routing del traffico HTTP verso i servizi nei cluster:</ins>
+* Indirizza il traffico verso *flask-service* sulla porta 8000, che è quella esposta dall'app Flask
+* Utilizza il nome host *formazionesou.local*
+
+Infine ho setuppato una risorsa **Service (flask-service)** che inoltra le richieste dall'ingress ai pod che eseguono l'app Flask
+
+```
+[vagrant@node ~]$ kubectl describe ingress flask-ingress -n formazione-sou
+Name:             flask-ingress
+Labels:           app.kubernetes.io/managed-by=Helm
+                  app.kubernetes.io/name=ingress-nginx
+Namespace:        formazione-sou
+Address:          10.43.53.206
+Ingress Class:    nginx
+Default backend:  <default>
+Rules:
+  Host                 Path  Backends
+  ----                 ----  --------
+  formazionesou.local  
+                       /   flask-service:80 (10.42.0.51:8000)
+Annotations:           kubernetes.io/ingress.class: nginx
+                       meta.helm.sh/release-name: my-app
+                       meta.helm.sh/release-namespace: formazione-sou
+                       nginx.ingress.kubernetes.io/backend-protocol: HTTP
+```
+### Flusso della richiesta quando chiamo http://formazionesou.local
+1. **Ingress riceve la richiesta:**
+	* Il nome host *formazionesou.local* e la regola definita nell'oggetto Ingress identificano che la richiesta deve essere inoltrata al Service 		*flask-service*.
+2. **Ingress instrada la richiesta al Service**
+	* Il Service flask-service viene contattato sull'indirizzo IP ClusterIP e sulla porta 80
+3. **Service inoltra ai pod:**
+	* Il Service mappa la porta 80 alla targetPort (8000), che è la porta in cui l'app Flask sta effettivamente ascoltando.
+4. **Pod gestisce la richiesta:**
+	* Uno dei pod associati al Service risponde alla richiesta --> nel mio caso ho solo un pod *flask-app* a cui verrà inoltrata.
+5. **Risultato:**
+	* `curl http://formazionesou.local` --> Hello, World!
+
+

@@ -20,7 +20,7 @@ pipeline {
 				script {
 					sh(script: "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx") 
 					sh(script: "helm repo update")
-					sh(script: "helm install flask-app-ingress ingress-nginx/ingress-nginx --namespace ${KUB_NAMESPACE} --set controller.service.type=NodePort")
+					sh(script: "helm upgrade --install flask-app-ingress ingress-nginx/ingress-nginx --namespace ${KUB_NAMESPACE} --set controller.service.type=NodePort")
 				}
 			}
 		}
@@ -50,6 +50,16 @@ pipeline {
 					sh '''
 					#!/bin/bash
 					ssh -T -i ${KEY_PATH} -o StrictHostKeyChecking=no vagrant@192.168.10.10 "chmod +x ${SCRIPT_PATH} && bash ${SCRIPT_PATH}"
+					'''
+				}
+			}
+		}
+		stage('Configure DNS') {
+			steps {
+				script {
+					sh '''
+					#!/bin/bash
+					ssh -T -i ${KEY_PATH} -o StrictHostKeyChecking=no vagrant@192.168.10.10 "NODE_IP=$(kubectl get service flask-service -n formazione-sou -o jsonpath='{.spec.clusterIP}') && echo $NODE_IP ${HOST} | sudo tee -a /etc/hosts"
 					'''
 				}
 			}

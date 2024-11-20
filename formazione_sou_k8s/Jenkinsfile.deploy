@@ -5,6 +5,8 @@ pipeline {
 		SCRIPT_PATH='/home/vagrant/export-deployment.sh'
 		KEY_PATH='/var/jenkins_home/.ssh/id_rsa'
 		HOST='formazionesou.local'
+		VAGRANT_IP='192.168.10.10'
+		VAGRANT_USER='vagrant'
 	}
 	parameters {
 		string(name: 'TAG', defaultValue: 'latest', description: 'Docker image tag')
@@ -49,7 +51,7 @@ pipeline {
 				script {
 					sh '''
 					#!/bin/bash
-					ssh -T -i ${KEY_PATH} -o StrictHostKeyChecking=no vagrant@192.168.10.10 "chmod +x ${SCRIPT_PATH} && bash ${SCRIPT_PATH}"
+					ssh -T -i ${KEY_PATH} -o StrictHostKeyChecking=no ${VAGRANT_USER}@${VAGRANT_IP} "chmod +x ${SCRIPT_PATH} && bash ${SCRIPT_PATH}"
 					'''
 				}
 			}
@@ -59,7 +61,7 @@ pipeline {
 				script {
 					sh '''
 					#!/bin/bash
-					ssh -T -i ${KEY_PATH} -o StrictHostKeyChecking=no vagrant@192.168.10.10 'NODE_IP=$(kubectl get service flask-service -n formazione-sou -o jsonpath="{.spec.clusterIP}") && echo "${NODE_IP} formazionesou.local" | sudo tee -a /etc/hosts'
+					ssh -T -i ${KEY_PATH} -o StrictHostKeyChecking=no ${VAGRANT_USER}@${VAGRANT_IP} 'NODE_IP=$(kubectl get service flask-service -n formazione-sou -o jsonpath="{.spec.clusterIP}") && echo "${NODE_IP} formazionesou.local" | sudo tee -a /etc/hosts'
 					'''
 				}
 			}

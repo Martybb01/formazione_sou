@@ -5,8 +5,11 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: ingress-nginx
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
-  ingressClassName: nginx
+  ingressClassName: {{ .Values.ingress.className }}
   rules:
   - host: {{ .Values.ingress.host }}
     http:
@@ -15,6 +18,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: {{ .Values.ingress.serviceName }}
+            name: {{ .Values.service.name }}
             port:
-              number: {{ .Values.ingress.servicePort }}
+              number: 80

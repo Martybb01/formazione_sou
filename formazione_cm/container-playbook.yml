@@ -1,0 +1,38 @@
+- name: Setup a docker private registry
+  hosts: local
+  become: false
+  tasks:
+    - name: Ensure Docker is installed
+      ansible.builtin.package:
+        name: docker
+        state: present
+    
+    - name: Ensure Docker is running
+      ansible.builtin.command:
+        cmd: docker info
+      register: docker_status
+      failed_when: "'ERROR' in docker_status.stderr"
+    
+    - name: Pull Docker image registry
+      community.docker.docker_image:
+        name: registry:2
+        source: pull
+    
+    - name: Create Docker volume for registry
+      community.docker.docker_volume:
+        name: registry_data
+        state: present
+
+    - name: Run Docker registry container
+      community.docker.docker_container:
+        name: registry
+        image: registry:2
+        state: started
+        ports:
+          - "5000:5000"
+        volumes:
+          - registry_data:/var/lib/registry
+        restart_policy: always
+
+
+

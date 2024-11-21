@@ -32,6 +32,8 @@
           - "5000:5000"
         volumes:
           - registry_data:/var/lib/registry
+        env:
+          REGISTRY_STORAGE_DELETE_ENABLED: "true"
         restart_policy: always
 
 

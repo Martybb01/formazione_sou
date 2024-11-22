@@ -1,4 +1,4 @@
-- name: Build Docker images
+- name: Build Docker images and run containers
   hosts: local
   become: false
   tasks:
@@ -8,6 +8,15 @@
         build:
           path: ./alpine
         source: build
+    
+    - name: Run alpine container
+      community.docker.docker_container:
+        name: alpine-ssh
+        image: alpine:ssh-v1
+        state: started
+        restart_policy: always
+        ports:
+          - "4200:22"
         
     - name: Build Rocky image
       community.docker.docker_image:
@@ -15,3 +24,12 @@
         build:
           path: ./rocky
         source: build
+
+    - name: Run rocky container
+      community.docker.docker_container:
+        name: rocky-ssh
+        image: rocky:ssh-v1
+        state: started
+        restart_policy: always
+        ports:
+          - "4201:22"

@@ -20,5 +20,5 @@ RUN	sed -i 's/#PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config && 
     sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config && \
     echo 'AllowUsers genericuser' >> /etc/ssh/sshd_config
 
-EXPOSE 4200
+EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

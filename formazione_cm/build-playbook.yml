@@ -4,14 +4,14 @@
   tasks:
     - name: Build Alpine image
       community.docker.docker_image:
-        name: alpine:latest
+        name: alpine:ssh-v1
         build:
           path: ./alpine
         source: build
         
     - name: Build Rocky image
       community.docker.docker_image:
-        name: rocky:latest
+        name: rocky:ssh-v1
         build:
           path: ./rocky
         source: build

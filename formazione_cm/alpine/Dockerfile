@@ -3,7 +3,7 @@ FROM alpine:latest
 # Install ssh and sudo
 RUN apk update && apk add --no-cache openssh sudo && \
 	mkdir /var/run/sshd && \
-	adduser -h -D /home/genericuser -s /bin/bash genericuser && \
+	adduser -D -h /home/genericuser -s /bin/bash genericuser && \
 	echo 'genericuser:pippo' | chpasswd && \
 	echo 'genericuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
 	mkdir /home/genericuser/.ssh && \

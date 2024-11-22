@@ -1,4 +1,4 @@
-FROM centos:latest
+FROM rockylinux:9
 
 # Install ssh and sudo
 RUN dnf update -y && dnf install openssh-server sudo -y && \

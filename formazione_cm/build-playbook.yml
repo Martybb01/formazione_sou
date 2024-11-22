@@ -1,0 +1,17 @@
+- name: Build Docker images
+  hosts: local
+  become: false
+  tasks:
+    - name: Build Alpine image
+      community.docker.docker_image:
+        name: alpine:latest
+        build:
+          path: ./alpine
+        source: build
+        
+    - name: Build Rocky image
+      community.docker.docker_image:
+        name: rocky:latest
+        build:
+          path: ./rocky
+        source: build

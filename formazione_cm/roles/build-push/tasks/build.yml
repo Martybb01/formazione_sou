@@ -1,0 +1,25 @@
+- name: Build Alpine image
+  community.docker.docker_image:
+    name: '{{ registry_url }}/alpine:{{ alpine_tag }}'
+    build:
+      path: '{{ alpine_path }}'
+    source: build
+
+- name: Push Alpine to registry
+  community.docker.docker_image:
+    name: '{{ registry_url }}/alpine:{{ alpine_tag }}'
+    push: yes
+    source: local
+
+- name: Build Rocky image
+  community.docker.docker_image:
+    name: '{{ registry_url }}/rocky:{{ rocky_tag }}'
+    build:
+      path: '{{ rocky_path }}'
+    source: build
+
+- name: Push Rocky to registry
+  community.docker.docker_image:
+    name: '{{ registry_url }}/rocky:{{ rocky_tag }}'
+    push: yes
+    source: local

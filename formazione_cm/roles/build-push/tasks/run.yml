@@ -1,0 +1,17 @@
+- name: Run alpine container
+  community.docker.docker_container:
+    name: alpine-ssh
+    image: '{{ registry_url }}/alpine:{{ alpine_tag }}'
+    state: started
+    restart_policy: always
+    ports:
+      - "{{ alpine_port }}:22"
+
+- name: Run rocky container
+  community.docker.docker_container:
+    name: rocky-ssh
+    image: '{{ registry_url }}/rocky:{{ rocky_tag }}'
+    state: started
+    restart_policy: always
+    ports:
+      - "{{ rocky_port }}:22"

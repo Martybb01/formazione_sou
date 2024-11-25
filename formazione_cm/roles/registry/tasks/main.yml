@@ -1,0 +1,33 @@
+- name: Ensure Docker is installed
+  ansible.builtin.package:
+    name: docker
+    state: present
+
+- name: Ensure Docker is running
+  ansible.builtin.command:
+    cmd: docker info
+  register: docker_status
+  failed_when: "'ERROR' in docker_status.stderr"
+
+- name: Pull Docker image registry
+  community.docker.docker_image:
+    name: "{{ registry_image }}"
+    source: pull
+
+- name: Create Docker volume for registry
+  community.docker.docker_volume:
+    name: "{{ registry_volume }}"
+    state: present
+
+- name: Run Docker registry container
+  community.docker.docker_container:
+    name: "{{ registry_name }}"
+    image: "{{ registry_image }}"
+    state: started
+    ports:
+      - "{{ registry_port }}:5000"
+    volumes:
+      - "{{ registry_volume }}:/var/lib/registry"
+    env:
+      REGISTRY_STORAGE_DELETE_ENABLED: "{{ registry_storage_delete_enabled }}"
+    restart_policy: always

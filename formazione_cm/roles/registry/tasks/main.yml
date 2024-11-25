@@ -2,17 +2,20 @@
   ansible.builtin.package:
     name: docker
     state: present
+  when: container_runtime == 'docker'
 
 - name: Ensure Docker is running
   ansible.builtin.command:
     cmd: docker info
   register: docker_status
   failed_when: "'ERROR' in docker_status.stderr"
+  when: container_runtime == 'docker'
 
 - name: Pull Docker image registry
   community.docker.docker_image:
     name: "{{ registry_image }}"
     source: pull
+  when: container_runtime == 'docker'
 
 - name: Create Docker volume for registry
   community.docker.docker_volume:
@@ -31,3 +34,43 @@
     env:
       REGISTRY_STORAGE_DELETE_ENABLED: "{{ registry_storage_delete_enabled }}"
     restart_policy: always
+  when: container_runtime == 'docker'
+
+- name: Ensure Podman is installed
+  ansible.builtin.package:
+    name: podman
+    state: present
+  when: container_runtime == 'podman'
+
+- name: Ensure Podman is running
+  ansible.builtin.command:
+    cmd: podman info
+  register: podman_status
+  failed_when: "'ERROR' in podman_status.stderr"
+  when: container_runtime == 'podman'
+
+- name: Pull Podman image registry
+  containers.podman.podman_image:
+    name: "{{ registry_image }}"
+    source: pull
+  when: container_runtime == 'podman'
+
+- name: Create Podman volume for registry
+  containers.podman.podman_volume:
+    name: "{{ registry_volume }}"
+    state: present
+  when: container_runtime == 'podman'
+
+- name: Run Podman registry container
+  containers.podman.podman_container:
+    name: "{{ registry_name }}"
+    image: "{{ registry_image }}"
+    state: started
+    ports:
+      - "{{ registry_port }}:5000"
+    volumes:
+      - "{{ registry_volume }}:/var/lib/registry"
+    env:
+      REGISTRY_STORAGE_DELETE_ENABLED: "{{ registry_storage_delete_enabled }}"
+    restart_policy: always
+  when: container_runtime == 'podman'

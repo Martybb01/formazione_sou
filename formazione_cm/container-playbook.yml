@@ -1,8 +1,9 @@
-- name: Setup a docker private registry
+- name: Setup registry and build/push images
   hosts: local
   become: false
   roles:
-    - registry
+    - { role: registry, container_runtime: docker }
+    - { role: build-push, container_runtime: docker }
 
 
 

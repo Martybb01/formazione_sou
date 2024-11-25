@@ -1,5 +1,0 @@
-  - name: Build Docker images and run containers
-    hosts: local
-    become: false
-    roles:
-      - build-push

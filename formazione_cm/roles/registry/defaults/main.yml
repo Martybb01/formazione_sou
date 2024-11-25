@@ -1,4 +1,5 @@
 registry_storage_delete_enabled: "true"
-registry_port: 5000
+registry_port_docker: 5000
+registry_port_podman: 5001
 registry_image: registry:2
 container_runtime: docker

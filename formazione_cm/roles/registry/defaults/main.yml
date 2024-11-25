@@ -1,1 +1,3 @@
 registry_storage_delete_enabled: "true"
+registry_port: 5000
+registry_image: registry:2

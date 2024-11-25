@@ -1,0 +1,5 @@
+registry_url: localhost:5000
+alpine_port: 4200
+rocky_port: 4201
+rocky_tag: ssh-v1
+alpine_tag: ssh-v1

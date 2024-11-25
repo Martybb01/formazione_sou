@@ -1,4 +1,2 @@
-registry_image: registry:2
 registry_name: registry
-registry_port: 5000
 registry_volume: registry_data

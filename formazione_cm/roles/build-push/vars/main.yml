@@ -1,7 +1,2 @@
-alpine_tag: ssh-v1
 alpine_path: ./alpine
-rocky_tag: ssh-v1
 rocky_path: ./rocky
-registry_url: localhost:5000
-alpine_port: 4200
-rocky_port: 4201

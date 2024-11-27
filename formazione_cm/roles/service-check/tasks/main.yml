@@ -1,0 +1,43 @@
+- name: Check if docker or podman binary exist
+  ansible.builtin.command: which {{ container_runtime }}
+  register: runtime_binary
+  when: container_runtime in ['docker', 'podman']
+
+- name: Set runtime_installed fact
+  ansible.builtin.set_fact:
+    runtime_installed: "{{ runtime_binary.rc == 0 }}"
+  when: container_runtime in ['docker', 'podman']
+
+- name: Populate service facts
+  ansible.builtin.service_facts:
+  when: 
+    - runtime_installed
+    - ansible_os_family == 'RedHat' or ansible_os_family == 'Debian'
+
+- name: Assert Container Runtime is installed and running on Linux
+  ansible.builtin.assert:
+    that: "runtime_installed and ansible_facts['services'][container_runtime + '.service']['state'] == 'running'"
+    fail_msg: "Service {{ container_runtime }} is not running"
+  when:
+    - runtime_installed
+    - ansible_os_family != 'Darwin'
+
+- name: Check if Docker is running
+  ansible.builtin.shell: docker ps
+  register: docker_status
+  failed_when: docker_status.rc != 0
+  when:
+    - runtime_installed
+    - container_runtime == 'docker'
+    - ansible_os_family == 'Darwin'
+
+- name: Check if Podman is running
+  ansible.builtin.shell: podman stats --no-stream
+  register: podman_status
+  failed_when: podman_status.rc != 0
+  when:
+    - runtime_installed
+    - container_runtime == 'podman'
+    - ansible_os_family == 'Darwin'
+
+

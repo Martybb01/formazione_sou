@@ -2,8 +2,9 @@
   hosts: local
   become: false
   roles:
-    - { role: registry, container_runtime: docker }
-    - { role: build-push, container_runtime: docker }
+    - { role: service-check, container_runtime: docker }
+    # - { role: registry, container_runtime: docker }
+    # - { role: build-push, container_runtime: docker }
 
 
 

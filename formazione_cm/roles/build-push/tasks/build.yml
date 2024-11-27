@@ -1,25 +1,47 @@
-- name: Build Alpine image
+- name: Build Alpine image with Docker
   community.docker.docker_image:
-    name: '{{ registry_url }}/alpine:{{ alpine_tag }}'
+    name: '{{ registry_url_docker }}/alpine:{{ alpine_tag }}'
     build:
       path: '{{ alpine_path }}'
     source: build
+  when: container_runtime == 'docker'
 
-- name: Push Alpine to registry
+- name: Push Alpine to Docker registry
   community.docker.docker_image:
-    name: '{{ registry_url }}/alpine:{{ alpine_tag }}'
+    name: '{{ registry_url_docker }}/alpine:{{ alpine_tag }}'
     push: yes
     source: local
+  when: container_runtime == 'docker'
 
-- name: Build Rocky image
+- name: Build Rocky image with Docker
   community.docker.docker_image:
-    name: '{{ registry_url }}/rocky:{{ rocky_tag }}'
+    name: '{{ registry_url_docker }}/rocky:{{ rocky_tag }}'
     build:
       path: '{{ rocky_path }}'
     source: build
+  when: container_runtime == 'docker'
 
 - name: Push Rocky to registry
   community.docker.docker_image:
-    name: '{{ registry_url }}/rocky:{{ rocky_tag }}'
+    name: '{{ registry_url_docker }}/rocky:{{ rocky_tag }}'
     push: yes
     source: local
+  when: container_runtime == 'docker'
+
+- name: Build and push Alpine image with Podman
+  containers.podman.podman_image:
+    name: '{{ registry_url_podman }}/alpine:{{ alpine_tag }}'
+    path: '{{ alpine_path }}'
+    build:
+      format: oci
+    push: true
+  when: container_runtime == 'podman'
+
+- name: Build and push Rocky image with Podman
+  containers.podman.podman_image:
+    name: '{{ registry_url_podman }}/rocky:{{ rocky_tag }}'
+    path: '{{ rocky_path }}'
+    build:
+      format: oci
+    push: true
+  when: container_runtime == 'podman'

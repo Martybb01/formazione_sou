@@ -1,4 +1,5 @@
-registry_url: localhost:5000
+registry_url_podman: localhost:5001
+registry_url_docker: localhost:5000
 alpine_port: 4200
 rocky_port: 4201
 rocky_tag: ssh-v1

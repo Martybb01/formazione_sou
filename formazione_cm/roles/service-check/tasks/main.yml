@@ -23,7 +23,7 @@
     - ansible_os_family != 'Darwin'
 
 - name: Check if Docker is running
-  ansible.builtin.shell: docker ps
+  ansible.builtin.command: docker ps
   register: docker_status
   failed_when: docker_status.rc != 0
   when:
@@ -32,7 +32,7 @@
     - ansible_os_family == 'Darwin'
 
 - name: Check if Podman is running
-  ansible.builtin.shell: podman stats --no-stream
+  ansible.builtin.command: podman ps
   register: podman_status
   failed_when: podman_status.rc != 0
   when:

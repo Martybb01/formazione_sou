@@ -1,24 +1,24 @@
 - name: Pull Docker image registry
   community.docker.docker_image:
-    name: "{{ registry_image }}"
+    name: '{{ registry_image }}'
     source: pull
   when: container_runtime == 'docker'
 
 - name: Create Docker volume for registry
   community.docker.docker_volume:
-    name: "{{ registry_volume }}"
+    name: '{{ registry_volume }}'
     state: present
   when: container_runtime == 'docker'
 
 - name: Run Docker registry container
   community.docker.docker_container:
-    name: "{{ registry_name }}"
-    image: "{{ registry_image }}"
+    name: '{{ registry_name }}'
+    image: '{{ registry_image }}'
     state: started
     ports:
-      - "{{ registry_port_docker }}:5000"
+      - '{{ registry_port_docker }}:5000'
     volumes:
-      - "{{ registry_volume }}:/var/lib/registry"
+      - '{{ registry_volume }}:/var/lib/registry'
     env:
       REGISTRY_STORAGE_DELETE_ENABLED: "{{ registry_storage_delete_enabled }}"
     restart_policy: always
@@ -27,26 +27,26 @@
 
 - name: Pull Podman image registry
   containers.podman.podman_image:
-    name: "{{ registry_image }}"
+    name: '{{ registry_image }}'
     pull: yes
   when: container_runtime == 'podman'
 
 - name: Create Podman volume for registry
   containers.podman.podman_volume:
-    name: "{{ registry_volume }}"
+    name: '{{ registry_volume }}'
     state: present
   when: container_runtime == 'podman'
 
 - name: Run Podman registry container
   containers.podman.podman_container:
-    name: "{{ registry_name }}"
-    image: "{{ registry_image }}"
+    name: '{{ registry_name }}'
+    image: '{{ registry_image }}'
     state: started
     ports:
-      - "{{ registry_port_podman }}:5000"
+      - '{{ registry_port_podman }}:5000'
     volumes:
-      - "{{ registry_volume }}:/var/lib/registry"
+      - '{{ registry_volume }}:/var/lib/registry'
     env:
-      REGISTRY_STORAGE_DELETE_ENABLED: "{{ registry_storage_delete_enabled }}"
+      REGISTRY_STORAGE_DELETE_ENABLED: '{{ registry_storage_delete_enabled }}'
     restart_policy: always
   when: container_runtime == 'podman'

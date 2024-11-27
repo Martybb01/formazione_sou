@@ -1,7 +1,7 @@
 - name: Run docker alpine container
   community.docker.docker_container:
     name: alpine-ssh
-    image: '{{ registry_url }}/alpine:{{ alpine_tag }}'
+    image: '{{ registry_url_docker }}/alpine:{{ alpine_tag }}'
     state: started
     restart_policy: always
     ports:
@@ -11,7 +11,7 @@
 - name: Run docker rocky container
   community.docker.docker_container:
     name: rocky-ssh
-    image: '{{ registry_url }}/rocky:{{ rocky_tag }}'
+    image: '{{ registry_url_docker }}/rocky:{{ rocky_tag }}'
     state: started
     restart_policy: always
     ports:
@@ -22,7 +22,7 @@
 - name: Run podman alpine container
   containers.podman.podman_container:
     name: alpine-ssh
-    image: '{{ registry_url }}/alpine:{{ alpine_tag }}'
+    image: '{{ registry_url_podman }}/alpine:{{ alpine_tag }}'
     state: started
     ports:
       - "{{ alpine_port }}:22"
@@ -31,7 +31,7 @@
 - name: Run podman rocky container
   containers.podman.podman_container:
     name: rocky-ssh
-    image: '{{ registry_url }}/rocky:{{ rocky_tag }}'
+    image: '{{ registry_url_podman }}/rocky:{{ rocky_tag }}'
     state: started
     ports:
       - "{{ rocky_port }}:22"

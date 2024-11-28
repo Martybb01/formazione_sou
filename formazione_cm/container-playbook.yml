@@ -1,8 +1,6 @@
 - name: Setup registry and build/push images
   hosts: local
   become: false
-  # vars_files:
-  #   - vars/secrets.yml
   roles:
     - { role: service-check, container_runtime: docker }
     - { role: registry, container_runtime: docker }

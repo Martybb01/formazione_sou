@@ -4,7 +4,7 @@ FROM alpine:latest
 RUN apk update && apk add --no-cache openssh sudo && \
 	mkdir -p /var/run/sshd && chmod 0755 /var/run/sshd && \
 	adduser -D -h /home/genuser -s /bin/sh genuser && \
-	echo 'genuser:pippo' | chpasswd && \
+	echo 'genuser:{{ user_passwd }}' | chpasswd && \
 	echo 'genuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
 	mkdir /home/genuser/.ssh && \
 	chmod 700 /home/genuser/.ssh

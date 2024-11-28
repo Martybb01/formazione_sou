@@ -4,7 +4,7 @@ FROM rockylinux:9
 RUN dnf update -y && dnf install openssh-server sudo -y && \
 	mkdir -p /var/run/sshd && chmod 0755 /var/run/sshd && \
 	useradd -m -d /home/genuser -s /bin/bash genuser && \
-	echo 'genuser:pippo' | chpasswd && \
+	echo 'genuser:{{ user_passwd }}' | chpasswd && \
 	echo 'genuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
 	mkdir /home/genuser/.ssh && \
 	chmod 700 /home/genuser/.ssh

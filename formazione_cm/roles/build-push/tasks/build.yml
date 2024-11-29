@@ -45,3 +45,18 @@
       format: oci
     push: true
   when: container_runtime == 'podman'
+
+- name: Build Alpine image with Docker
+  community.docker.docker_image:
+    name: '{{ registry_url_docker }}/alpine/w-docker:{{ alpine_tag }}'
+    build:
+      path: '{{ alpine_docker_path }}'
+    source: build
+  when: container_runtime == 'docker'
+
+- name: Push Alpine image with Docker to registry
+  community.docker.docker_image:
+    name: '{{ registry_url_docker }}/alpine/w-docker:{{ alpine_tag }}'
+    push: yes
+    source: local
+  when: container_runtime == 'docker'

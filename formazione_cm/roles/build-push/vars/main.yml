@@ -1,2 +1,3 @@
 alpine_path: ./alpine
 rocky_path: ./rocky
+alpine_docker_path: ./alpine/w-docker

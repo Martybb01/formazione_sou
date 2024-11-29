@@ -3,13 +3,9 @@ pipeline {
 	environment {
 		DOCKER_REGISTRY = "localhost:5000"
 		IMAGE_TAG = "${env.BUILD_ID}"
+		PATH = "/usr/local/bin:$PATH"
 	}
 	stages {
-		stage('Clone repository') {
-			steps {
-				checkout scm
-			}
-		}
 		stage('Print PATH') {
             steps {
                 script {

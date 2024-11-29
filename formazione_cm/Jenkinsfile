@@ -10,6 +10,14 @@ pipeline {
 				checkout scm
 			}
 		}
+		stage('Print PATH') {
+            steps {
+                script {
+                    sh 'echo $PATH'
+                    sh 'which docker || echo Docker not found'
+                }
+            }
+        }
 		stage('Build and Push Alpine image') {
 			steps {
 				dir('formazione_cm/alpine') {

@@ -43,3 +43,22 @@ Sotto la dir `roles` ho creato tre ruoli ansible, che vengono chiamati dal playb
 * **build-push** --> Si compone di due file che sono inclusi dinamicamente all'interno di `main.yml` grazie al modulo *include_tasks*:
   * `build.yml` --> Fa il build e il push di due immagini Docker sul registry privato
   * `run.yml` --> Configura e avvia i container Docker o Podman basati sulle immagini buildate in precedenza e pushate sul registry 
+
+## Step 4 - Vault
+#### **Obiettivo:** Utilizzare Ansible vault per oscurare tutte le password e dati sensibili (come quella degli utenti nei dockerfile)
+
+Prima di tutto ho criptato la password dell'utente *genuser* che era riportata in chiaro nei due Dockerfile:
+* `ansible-vault encrypt_string 'pippo' --name 'user_passwd' --vault-password-file ./vault_pwd`
+* Ho copiato la stringa criptata nel file `secrets.yml` e l'ho incluso grazie al modulo *include_vars* direttamente nel ruolo che si occupa di eseguire la build dell'immagine.
+* Infine ho sostituito nel Dockerfile la password in chiaro con la variabile **user_passwd** che contiene la password criptata.
+
+Ho poi deciso di non criptare le chiavi SSH pubbliche di *genuser* in quanto si tratta di dati non particolarmente sensibili, e di criptare invece la chiave SSH privata *id_key_genuser* --> `ansible-vault encrypt ./id_key_genuser --vault-password-file ./vault_pwd`
+* Dal momento che ora la chiave privata è criptata da Ansible vault, per connettersi via SSH runnare lo script **ssh_access.sh**:
+  * Decritta temporaneamente il file contenente la chiave privata usando la password del vault (PRIVATA!)
+  * Connette l'utente genuser via SSH al container desiderato a seconda della porta specificata 
+  * Ri-cripta la chiave privata una volta effettuata la connessione per mantenerla al sicuro
+
+## Step 5 - Jenkins & Ansible
+#### **Obiettivo:** Creare un container che oltre ai requisiti dello step 2 abbia anche attivo il servizio Docker/Podman e poi configurare una pipeline Jenkins per: Eseguire una build di un'immagine e taggare in modo progressivo le immagini; Fare il push su un registry dell'immagine e Utilizzare Ansibile per eseguire il deploy sul container precedentemente creato.
+
+

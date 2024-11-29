@@ -1,0 +1,39 @@
+pipeline {
+	agent any
+	environment {
+		DOCKER_REGISTRY = "localhost:5000"
+		IMAGE_TAG = "${env.BUILD_ID}"
+	}
+	stages {
+		stage('Clone repository') {
+			steps {
+				checkout scm
+			}
+		}
+		stage('Build and Push Alpine image') {
+			steps {
+				dir('formazione_cm/alpine') {
+					script {
+						def alpine_image = docker.build("${DOCKER_REGISTRY}/alpine:${IMAGE_TAG}")
+						alpine_image.push()
+					}
+				}
+			}
+		}
+		stage('Build and Push Rocky image') {
+			steps {
+				dir('formazione_cm/rocky') {
+					script {
+						def rocky_image = docker.build("${DOCKER_REGISTRY}/rocky:${IMAGE_TAG}")
+						rocky_image.push()
+					}
+				}
+			}
+		}
+	}
+	post {
+		always {
+			cleanWs()
+		}
+	}
+}

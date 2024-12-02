@@ -2,4 +2,4 @@
   hosts: containers
   become: false
   roles:
-    - { role: deploy_containers, container_runtime: podman }
+    - { role: deploy_containers, container_runtime: docker }

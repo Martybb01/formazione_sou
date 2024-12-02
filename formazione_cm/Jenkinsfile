@@ -1,7 +1,7 @@
 pipeline {
 	agent any
 	environment {
-		CONTAINER_RUNTIME = "podman"
+		CONTAINER_RUNTIME = "docker"
 		DOCKER_REGISTRY = "localhost:5000"
 		PODMAN_REGISTRY = "localhost:5001"
 		IMAGE_TAG = "${env.BUILD_ID}"

@@ -1,22 +1,22 @@
-# - name: Run docker alpine container
-#   community.docker.docker_container:
-#     name: alpine-app
-#     image: '{{ docker_registry }}/alpine:{{ image_tag }}'
-#     state: started
-#     restart_policy: always
-#     ports:
-#       - '{{ alpine_port }}:80'
-#   when: container_runtime == 'docker'
+- name: Run docker alpine container
+  community.docker.docker_container:
+    name: alpine-app
+    image: '{{ docker_registry }}/alpine:{{ image_tag }}'
+    state: started
+    restart_policy: always
+    ports:
+      - '{{ alpine_port }}:80'
+  when: container_runtime == 'docker'
 
-# - name: Run docker rocky container
-#   community.docker.docker_container:
-#     name: rocky-app
-#     image: '{{ docker_registry }}/rocky:{{ image_tag }}'
-#     state: started
-#     restart_policy: always
-#     ports:
-#       - '{{ rocky_port }}:80'
-#   when: container_runtime == 'docker'
+- name: Run docker rocky container
+  community.docker.docker_container:
+    name: rocky-app
+    image: '{{ docker_registry }}/rocky:{{ image_tag }}'
+    state: started
+    restart_policy: always
+    ports:
+      - '{{ rocky_port }}:80'
+  when: container_runtime == 'docker'
 
 - name: Run podman alpine container
   containers.podman.podman_container:

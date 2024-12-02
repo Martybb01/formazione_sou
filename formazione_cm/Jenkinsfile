@@ -44,7 +44,13 @@ pipeline {
 				}
 			}
 		}
-		stage('Deploy contianers') {
+		stage('Check PATH and Ansible') {
+    		steps {
+        		sh 'echo $PATH'
+        		sh 'which ansible-playbook || echo "ansible-playbook not found"'
+    		}
+		}
+		stage('Deploy containers') {
 			steps {
 				dir('formazione_cm') {
 					script {

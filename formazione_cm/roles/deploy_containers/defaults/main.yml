@@ -1,0 +1,4 @@
+alpine_port: 4200
+rocky_port: 4201
+image_tag: "16"
+container_runtime: docker

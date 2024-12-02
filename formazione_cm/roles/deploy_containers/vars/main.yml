@@ -1,0 +1,2 @@
+docker_registry: 192.168.1.182:5000
+podman_registry: 192.168.1.182:5001

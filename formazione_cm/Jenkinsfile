@@ -52,7 +52,6 @@ pipeline {
                     		ansiblePlaybook(
                         		playbook: 'deploy_containers.yml',
                         		inventory: 'inventory',
-                        		ansibleExecutable: '/usr/local/bin/ansible-playbook',
                         		vaultCredentialsId: 'ansible_vault_pwd',
                         		extraVars: [
                             		image_tag: env.IMAGE_TAG

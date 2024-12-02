@@ -54,11 +54,16 @@ pipeline {
 			steps {
 				dir('formazione_cm') {
 					withCredentials([string(credentialsId: 'ansible_vault_pwd', variable: 'VAULT_PASSWORD')]) {
-                        sh """
-                        echo $VAULT_PASSWORD > vault_pwd_file
-                        ansible-playbook -i inventory deploy_containers.yml --vault-password-file vault_pwd_file -e "image_tag=${env.IMAGE_TAG}"
-                        rm -f vault_pwd_file
-                        """
+                        script {
+                            writeFile file: 'vault_pwd_file', text: "${VAULT_PASSWORD}"
+                            sh '''
+                                chmod 600 ./id_key_genuser
+                                ansible-playbook -i inventory deploy_containers.yml \
+                                --vault-password-file vault_pwd_file \
+                                -e image_tag=${IMAGE_TAG}
+                            '''
+                            sh 'rm -f vault_pwd_file'
+                        }
 					}
 				}
 			}

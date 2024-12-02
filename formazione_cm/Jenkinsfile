@@ -44,12 +44,6 @@ pipeline {
 				}
 			}
 		}
-		stage('Check PATH and Ansible') {
-    		steps {
-        		sh 'echo $PATH'
-        		sh 'which ansible-playbook || echo "ansible-playbook not found"'
-    		}
-		}
 		stage('Deploy containers') {
 			steps {
 				dir('formazione_cm') {
@@ -84,27 +78,3 @@ def build_and_push_image(image, runtime) {
 	sh "${runtime} build -t ${image} ."
 	sh "${runtime} push ${image}"
 }
-
-// withCredentials([string(credentialsId: 'ansible-vault-password', variable: 'VAULT_PASSWORD')]) {
-//                     script {
-//                         sh """
-//                         # Decrypt the key
-//                         ansible-vault decrypt ./id_key_genuser --vault-password-file <(echo $VAULT_PASSWORD)
-
-//                         # Run the playbook
-//                         ansible-playbook -i inventory deploy_containers.yml --vault-password-file <(echo $VAULT_PASSWORD) -vvv
-
-//                         # Encrypt the key again
-//                         ansible-vault encrypt ./id_key_genuser --vault-password-file <(echo $VAULT_PASSWORD)
-//                         """
-//                     }
-//                 }
-
-// ansiblePlaybook(
-//                         	playbook: 'formazione_cm/deploy_containers.yml',
-//                         	inventory: 'inventory',
-//                         	vaultCredentialsId: 'ansible_vault_pwd',
-//                         	extraVars: [
-//                             	image_tag: env.IMAGE_TAG
-//                         	]
-//                     	)

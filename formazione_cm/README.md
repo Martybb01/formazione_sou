@@ -35,14 +35,16 @@ Per gestire le build dei container ho configurato due ansible tasks all'interno 
 ## Step 3 - Creazione di un ruolo
 #### **Obiettivo:** Usando i precedenti task, crea più ruoli ansible con tali caratteristiche: Creazione e configurazione di un registry + Build di almeno 2 container (Push delle build sul registry precedentemente creato + run container senza conflitto di porte). Creare uno o più ruoli che funzionino sia con Docker che con Podman.
 
-Sotto la dir `roles` ho creato tre ruoli ansible, che vengono chiamati dal playbook `container-playbook.yml` con la possibilità inoltre di specificare se runnare i tasks usando Docker oppure Podman:
+Sotto la dir `roles` ho creato tre ruoli ansible, che vengono chiamati dal playbook `container-playbook.yml` con la possibilità inoltre di specificare se runnare i tasks usando Docker oppure Podman (solo per *service-check* e *registry*):
 * **service-check** --> Verifica se i binari di Docker o Podman sono installati sul SO e se i relativi servizi stanno runnando.
   * Per quando riguarda i sistemi Linux, ho sfruttato la builtin ansible *ansible.builtin.service_facts* per verificare lo stato del servizio in combo con *ansible.builtin.assert*, che fa fallire il playbook se la condizione non è soddisfatta.
   * Dal momento che MacOS non può sfruttare la builtin *ansible.builtin.service_facts* in quanto fa uso di launchctl e non systemctl, come workaround eseguo `docker ps` per verificare che il demone Docker sia attivo oppure `podman ps` per verificare che l'ambiente Linux sottostante sia stato correttamente configurato. In caso di codice di uscita diverso da 0, i tasks falliranno.
 * **registry** --> Gestisce l'installazione e la configurazione di un registry locale Docker usando sia Docker che Podman, a seconda del `container_runtime` specificato.
 * **build-push** --> Si compone di due file che sono inclusi dinamicamente all'interno di `main.yml` grazie al modulo *include_tasks*:
-  * `build.yml` --> Fa il build e il push di due immagini Docker sul registry privato
-  * `run.yml` --> Configura e avvia i container Docker o Podman basati sulle immagini buildate in precedenza e pushate sul registry 
+  * `build.yml` --> Fa il build e il push sul registry locale dell'immagine creata allo *Step 5* ossia del container che ha attivo il servizio Docker (nella dir */alpine/w-docker*)
+  * `run.yml` --> Configura e avvia il container **alpine-ssh-w-docker**
+
+Un quarto ruolo Ansible relativo al deploy delle app viene chiamato dal playbook `deploy_containers.yml`.  
 
 ## Step 4 - Vault
 #### **Obiettivo:** Utilizzare Ansible vault per oscurare tutte le password e dati sensibili (come quella degli utenti nei dockerfile)
@@ -61,4 +63,7 @@ Ho poi deciso di non criptare le chiavi SSH pubbliche di *genuser* in quanto si 
 ## Step 5 - Jenkins & Ansible
 #### **Obiettivo:** Creare un container che oltre ai requisiti dello step 2 abbia anche attivo il servizio Docker/Podman e poi configurare una pipeline Jenkins per: Eseguire una build di un'immagine e taggare in modo progressivo le immagini; Fare il push su un registry dell'immagine e Utilizzare Ansibile per eseguire il deploy sul container precedentemente creato.
 
+Creato il dockerfile x nuovo container + script docker-entrypoint.sh + nuovi tasks ansible per costruire l'immagine e pusharla sul registry
+Creato il task per runnare il container
 
+Pipeline x build e push delle immagini sul registry pronto --> ho spostato la logica del build e push delle due img alpine e rocky dai tasks ansible a pipeline Jenkins + aggiunto il deploy da pipeline tramite Ansible che rimanda a *deploy_containers* e lo esegue sul container con Docker.

@@ -1,8 +1,7 @@
 registry_url_podman: localhost:5001
 registry_url_docker: localhost:5000
-alpine_port: 4200
-rocky_port: 4201
 alpine_docker_port: 4202
+docker_daemon: 2375
 rocky_tag: ssh-v1
 alpine_tag: ssh-v1
 container_runtime: docker

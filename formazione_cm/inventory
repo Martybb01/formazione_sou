@@ -1,2 +1,5 @@
 [local]
 localhost ansible_connection=local ansible_python_interpreter=/usr/local/bin/ansible_env/bin/python
+
+[containers]
+docker-ssh-container ansible_host=127.0.0.1 ansible_port=4202 ansible_user=genuser ansible_ssh_private_key_file=/home/genuser/.ssh/id_rsa

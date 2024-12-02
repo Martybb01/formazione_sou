@@ -18,4 +18,4 @@ fi
 # Start the Docker service
 echo "${AUTHORIZED_KEYS:-}" > /root/.ssh/authorized_keys
 mkdir -p /root/.docker/ && echo ${DOCKER_CONFIG_JSON:-} > /root/.docker/config.json
-exec dockerd
+exec dockerd -H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock

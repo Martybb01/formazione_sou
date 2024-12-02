@@ -44,6 +44,21 @@ pipeline {
 				}
 			}
 		}
+		stage('Deploy contianers') {
+			steps {
+				script {
+					ansiblePlaybook(
+						playbook: 'deploy_containers.yml',
+						inventory: 'inventory',
+						extraVars: [
+							"docker_registry=${env.DOCKER_REGISTRY}",
+							"podman_registry=${env.PODMAN_REGISTRY}",
+							"image_tag=${env.IMAGE_TAG}"
+						]
+					)
+				}
+			}
+		}
 	}
 	post {
 		always {

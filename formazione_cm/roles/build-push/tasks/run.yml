@@ -12,6 +12,7 @@
     restart_policy: always
     ports:
       - "{{ alpine_docker_port }}:22"
+      - "{{ docker_daemon }}:2375"
     volumes:
       - docker_data:/var/lib/docker
     privileged: yes

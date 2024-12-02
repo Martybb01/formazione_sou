@@ -1,0 +1,29 @@
+- name: Deploy application
+  hosts: containers
+  become: true
+  vars:
+    docker_registry: "{{ docker_registry }}"
+    podman_registry: "{{ podman_registry }}"
+    image_tag: "{{ image_tag }}"
+    container_runtime: docker
+  tasks:
+    - name: Run docker alpine container
+      community.docker.docker_container:
+        name: alpine-ssh
+        image: '{{ docker_registry }}/alpine:{{ image_tag }}'
+        state: started
+        restart_policy: always
+        ports:
+          - 4200:80
+      when: container_runtime == 'docker'
+    
+    - name: Run docker rocky container
+      community.docker.docker_container:
+        name: rocky-ssh
+        image: '{{ docker_registry }}/rocky:{{ image_tag }}'
+        state: started
+        restart_policy: always
+        ports:
+          - 4201:80
+      when: container_runtime == 'docker'
+  

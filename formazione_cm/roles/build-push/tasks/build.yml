@@ -4,21 +4,9 @@
     build:
       path: '{{ alpine_docker_path }}'
     source: build
-  when: container_runtime == 'docker'
 
 - name: Push Alpine image with Docker to registry
   community.docker.docker_image:
     name: '{{ registry_url_docker }}/alpine/w-docker:{{ alpine_tag }}'
     push: yes
     source: local
-  when: container_runtime == 'docker'
-
-- name: Build Alpine image with Podman and push to registry
-  containers.podman.podman_image:
-    name: '{{ registry_url_podman }}/alpine/w-docker:{{ alpine_tag }}'
-    path: '{{ alpine_docker_path }}'
-    build:
-      format: oci
-    push: true
-  when: container_runtime == 'podman'
-

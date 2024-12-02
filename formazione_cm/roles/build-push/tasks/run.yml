@@ -18,23 +18,5 @@
     privileged: yes
   when: container_runtime == 'docker'
 
-- name: Create Podman data volume
-  containers.podman.podman_volume:
-    name: podman_data
-    state: present
-  when: container_runtime == 'podman'
-
-- name: Run podman alpine container with Podman
-  containers.podman.podman_container:
-    name: alpine-ssh-w-docker
-    image: '{{ registry_url_podman }}/alpine/w-docker:{{ alpine_tag }}'
-    state: started
-    ports:
-      - "{{ alpine_docker_port }}:22"
-    volumes:
-      - podman_data:/var/lib/docker
-    privileged: yes
-  when: container_runtime == 'podman'
-
 
 

@@ -6,7 +6,6 @@
     restart_policy: always
     ports:
       - '{{ alpine_port }}:80'
-  when: container_runtime == 'docker'
 
 - name: Run docker rocky container
   community.docker.docker_container:
@@ -16,22 +15,3 @@
     restart_policy: always
     ports:
       - '{{ rocky_port }}:80'
-  when: container_runtime == 'docker'
-
-- name: Run podman alpine container
-  containers.podman.podman_container:
-    name: alpine-app
-    image: '{{ podman_registry }}/alpine:{{ image_tag }}'
-    state: started
-    ports:
-      - '{{ alpine_port }}:80'
-  when: container_runtime == 'podman'
-
-- name: Run podman rocky container
-  containers.podman.podman_container:
-    name: rocky-app
-    image: '{{ podman_registry }}/rocky:{{ image_tag }}'
-    state: started
-    ports:
-      - '{{ rocky_port }}:80'
-  when: container_runtime == 'podman'

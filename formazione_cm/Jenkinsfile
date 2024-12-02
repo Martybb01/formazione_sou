@@ -55,7 +55,7 @@ pipeline {
 				dir('formazione_cm') {
 					withCredentials([string(credentialsId: 'ansible_vault_pwd', variable: 'VAULT_PASSWORD')]) {
                         script {
-                            writeFile file: 'vault_pwd_file', text: "${VAULT_PASSWORD}"
+                            writeFile file: 'vault_pwd_file', text: VAULT_PASSWORD
                             sh '''
 								ansible-vault decrypt ./id_key_genuser --vault-password-file vault_pwd_file
                                 chmod 600 ./id_key_genuser

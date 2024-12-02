@@ -1,25 +1,31 @@
 pipeline {
 	agent any
 	environment {
+		CONTAINER_RUNTIME = "docker"
 		DOCKER_REGISTRY = "localhost:5000"
+		PODMAN_REGISTRY = "localhost:5001"
 		IMAGE_TAG = "${env.BUILD_ID}"
 		PATH = "/usr/local/bin:$PATH"
 	}
 	stages {
-		stage('Print PATH') {
-            steps {
-                script {
-                    sh 'echo $PATH'
-                    sh 'which docker || echo Docker not found'
-                }
-            }
-        }
+		stage('Setup') {
+			steps {
+				script {
+					registry = env.CONTAINER_RUNTIME == "docker" ? env.DOCKER_REGISTRY : env.PODMAN_REGISTRY
+					isDocker = env.CONTAINER_RUNTIME == "docker"
+				}
+			}
+		}
 		stage('Build and Push Alpine image') {
 			steps {
 				dir('formazione_cm/alpine') {
 					script {
-						def alpine_image = docker.build("${DOCKER_REGISTRY}/alpine:${IMAGE_TAG}")
-						alpine_image.push()
+						if (isDocker) {
+							def alpine_image = docker.build("${registry}/alpine:${IMAGE_TAG}")
+							alpine_image.push()
+						} else {
+							build_and_push_image("${registry}/alpine:${IMAGE_TAG}", "podman")
+						}
 					}
 				}
 			}
@@ -28,8 +34,12 @@ pipeline {
 			steps {
 				dir('formazione_cm/rocky') {
 					script {
-						def rocky_image = docker.build("${DOCKER_REGISTRY}/rocky:${IMAGE_TAG}")
-						rocky_image.push()
+						if (isDocker) {
+							def rocky_image = docker.build("${registry}/rocky:${IMAGE_TAG}")
+							rocky_image.push()
+						} else {
+							build_and_push_image("${registry}/rocky:${IMAGE_TAG}", "podman")
+						}
 					}
 				}
 			}
@@ -40,4 +50,9 @@ pipeline {
 			cleanWs()
 		}
 	}
+}
+
+def build_and_push_image(image, runtime) {
+	sh "${runtime} build -t ${image} ."
+	sh "${runtime} push ${image}"
 }

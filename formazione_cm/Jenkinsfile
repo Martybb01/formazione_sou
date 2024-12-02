@@ -52,7 +52,7 @@ pipeline {
 		}
 		stage('Deploy containers') {
 			steps {
-				dir("${env.WORKSPACE}/formazione_cm") {
+				dir("${env.WORKSPACE}") {
 					script {
                     	ansiblePlaybook(
                         	playbook: 'formazione_cm/deploy_containers.yml',

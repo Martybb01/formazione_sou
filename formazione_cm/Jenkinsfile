@@ -48,12 +48,12 @@ pipeline {
 			steps {
 				dir('formazione_cm') {
 					script {
-						withCredentials([string(credentialsId: 'ansible-vault-pwd', variable: 'VAULT_PASSWORD')]) {
+						withCredentials([string(credentialsId: 'ansible_vault_pwd', variable: 'VAULT_PASSWORD')]) {
                     		ansiblePlaybook(
                         		playbook: 'deploy_containers.yml',
                         		inventory: 'inventory',
                         		ansibleExecutable: '/usr/local/bin/ansible-playbook',
-                        		vaultCredentialsId: 'ansible-vault-pwd',
+                        		vaultCredentialsId: 'ansible_vault_pwd',
                         		extraVars: [
                             		image_tag: env.IMAGE_TAG
                         		]

@@ -1,27 +1,8 @@
-- name: Run docker alpine container
-  community.docker.docker_container:
-    name: alpine-ssh
-    image: '{{ registry_url_docker }}/alpine:{{ alpine_tag }}'
-    state: started
-    restart_policy: always
-    ports:
-      - "{{ alpine_port }}:22"
-  when: container_runtime == 'docker'
-
-- name: Run docker rocky container
-  community.docker.docker_container:
-    name: rocky-ssh
-    image: '{{ registry_url_docker }}/rocky:{{ rocky_tag }}'
-    state: started
-    restart_policy: always
-    ports:
-      - "{{ rocky_port }}:22"
-  when: container_runtime == 'docker'
-
 - name: Create Docker data volume
   community.docker.docker_volume:
     volume_name: docker_data
     state: present
+  when: container_runtime == 'docker'
 
 - name: Run docker alpine container with Docker
   community.docker.docker_container:
@@ -36,21 +17,58 @@
     privileged: yes
   when: container_runtime == 'docker'
 
-
-- name: Run podman alpine container
-  containers.podman.podman_container:
-    name: alpine-ssh
-    image: '{{ registry_url_podman }}/alpine:{{ alpine_tag }}'
-    state: started
-    ports:
-      - "{{ alpine_port }}:22"
+- name: Create Podman data volume
+  containers.podman.podman_volume:
+    name: podman_data
+    state: present
   when: container_runtime == 'podman'
 
-- name: Run podman rocky container
+- name: Run podman alpine container with Podman
   containers.podman.podman_container:
-    name: rocky-ssh
-    image: '{{ registry_url_podman }}/rocky:{{ rocky_tag }}'
+    name: alpine-ssh-w-docker
+    image: '{{ registry_url_podman }}/alpine/w-docker:{{ alpine_tag }}'
     state: started
     ports:
-      - "{{ rocky_port }}:22"
+      - "{{ alpine_docker_port }}:22"
+    volumes:
+      - podman_data:/var/lib/docker
+    privileged: yes
   when: container_runtime == 'podman'
+
+# - name: Run docker alpine container
+#   community.docker.docker_container:
+#     name: alpine-ssh
+#     image: '{{ registry_url_docker }}/alpine:{{ alpine_tag }}'
+#     state: started
+#     restart_policy: always
+#     ports:
+#       - "{{ alpine_port }}:22"
+#   when: container_runtime == 'docker'
+
+# - name: Run docker rocky container
+#   community.docker.docker_container:
+#     name: rocky-ssh
+#     image: '{{ registry_url_docker }}/rocky:{{ rocky_tag }}'
+#     state: started
+#     restart_policy: always
+#     ports:
+#       - "{{ rocky_port }}:22"
+#   when: container_runtime == 'docker'
+
+# - name: Run podman alpine container
+#   containers.podman.podman_container:
+#     name: alpine-ssh
+#     image: '{{ registry_url_podman }}/alpine:{{ alpine_tag }}'
+#     state: started
+#     ports:
+#       - "{{ alpine_port }}:22"
+#   when: container_runtime == 'podman'
+
+# - name: Run podman rocky container
+#   containers.podman.podman_container:
+#     name: rocky-ssh
+#     image: '{{ registry_url_podman }}/rocky:{{ rocky_tag }}'
+#     state: started
+#     ports:
+#       - "{{ rocky_port }}:22"
+#   when: container_runtime == 'podman'

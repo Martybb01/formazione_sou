@@ -51,6 +51,7 @@ pipeline {
 						ansiblePlaybook(
 							playbook: 'deploy_containers.yml',
 							inventory: 'inventory',
+							ansibleExecutable: '/usr/local/bin/ansible-playbook',
 							extraVars: [
 								docker_registry: env.DOCKER_REGISTRY,
 								podman_registry: env.PODMAN_REGISTRY,

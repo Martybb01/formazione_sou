@@ -1,7 +1,7 @@
 FROM alpine:latest
 
 # Install ssh, sudo, docker, and openrc
-RUN apk update && apk add --no-cache openssh sudo docker openrc && \
+RUN apk update && apk add --no-cache openssh sudo docker openrc python3 py3-pip py3-requests && ln -sf python3 /usr/bin/python && \
     mkdir -p /var/run/sshd && chmod 0755 /var/run/sshd && \
     adduser -D -h /home/genuser -s /bin/sh genuser && \
     echo 'genuser:{{ user_passwd }}' | chpasswd && \
@@ -25,6 +25,8 @@ RUN sed -i 's/#PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config && 
 RUN rc-update add docker boot
 RUN mkdir /var/lib/docker
 VOLUME /var/lib/docker
+
+RUN mkdir -p /etc/docker && echo '{ "insecure-registries":["192.168.1.182:5000"] }' > /etc/docker/daemon.json
 
 # Copy and set entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/

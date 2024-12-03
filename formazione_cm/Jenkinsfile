@@ -47,16 +47,17 @@ pipeline {
 		stage('Deploy containers') {
 			steps {
 				dir('formazione_cm') {
-					withCredentials([string(credentialsId: 'ansible_vault_pwd', variable: 'VAULT_PASSWORD')]) {
-                        ansiblePlaybook(
-							installation: 'ansible',
-							inventory: 'inventory',
-							playbook: 'deploy_containers.yml',
-							extras: "--vault-password-file vault_pwd -e image_tag=${IMAGE_TAG}",
-							hostKeyChecking: false,
-							colorized: true
-						)
-					}
+					ansiblePlaybook(
+						installation: 'ansible',
+						inventory: 'inventory',
+						playbook: 'deploy_containers.yml',
+						vaultCredentialsId: 'ansible_vault_pwd',
+						extraVars: [
+							image_tag: env.IMAGE_TAG
+						],
+						hostKeyChecking: false,
+						colorized: true
+					)
 				}
 			}
 		}

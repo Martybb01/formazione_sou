@@ -44,13 +44,6 @@ pipeline {
 				}
 			}
 		}
-		stage('Fix key permissions') {
-			steps {
-				dir('formazione_cm') {
-					sh "chmod 600 ./id_key_genuser"
-				}
-			}
-		}
 		stage('Deploy containers') {
 			steps {
 				dir('formazione_cm') {
@@ -67,6 +60,7 @@ pipeline {
 							)
 						}
 					}
+				}
 			}
 		}
 	}

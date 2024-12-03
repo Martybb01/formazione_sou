@@ -42,9 +42,9 @@ Sotto la dir `roles` ho creato tre ruoli ansible, che vengono chiamati dal playb
 * **registry** --> Gestisce l'installazione e la configurazione di un registry locale Docker usando sia Docker che Podman, a seconda del `container_runtime` specificato.
 * **build-push** --> Si compone di due file che sono inclusi dinamicamente all'interno di `main.yml` grazie al modulo *include_tasks*:
   * `build.yml` --> Fa il build e il push sul registry locale dell'immagine creata allo *Step 5* ossia del container che ha attivo il servizio Docker (nella dir */alpine/w-docker*)
-  * `run.yml` --> Configura e avvia il container **alpine-ssh-w-docker**
+  * `run.yml` --> Configura e avvia il container **alpine-ssh-w-docker** 
 
-Un quarto ruolo Ansible relativo al deploy delle app viene chiamato dal playbook `deploy_containers.yml`.  
+Un quarto ruolo Ansible (**deploy_containers**) relativo al deploy delle due app (Alpine e Rocky) viene chiamato dal playbook `deploy_containers.yml` --> sostanzialmente i tasks del role runnano, sul container host con Docker attivo, i due container, che vengono costruiti tramite Jenkins pipeline (precedentemente tramitr Ansible tasks) usando l'immagine pushata sul registry locale.
 
 ## Step 4 - Vault
 #### **Obiettivo:** Utilizzare Ansible vault per oscurare tutte le password e dati sensibili (come quella degli utenti nei dockerfile)
@@ -63,7 +63,9 @@ Ho poi deciso di non criptare le chiavi SSH pubbliche di *genuser* in quanto si 
 ## Step 5 - Jenkins & Ansible
 #### **Obiettivo:** Creare un container che oltre ai requisiti dello step 2 abbia anche attivo il servizio Docker/Podman e poi configurare una pipeline Jenkins per: Eseguire una build di un'immagine e taggare in modo progressivo le immagini; Fare il push su un registry dell'immagine e Utilizzare Ansibile per eseguire il deploy sul container precedentemente creato.
 
-Creato il dockerfile x nuovo container + script docker-entrypoint.sh + nuovi tasks ansible per costruire l'immagine e pusharla sul registry
-Creato il task per runnare il container
+Per la creazione del container **alpine-ssh-w-docker** ho ripreso il Dockerfile usato per setuppare il container Alpine dello Step 2, integrandolo con:
+* l'aggiunta dei pacchetti necessari per configurare e avviare Docker al boot e per far si che possa gestire altri container
+* l'accesso al registry locale insicuro con l'aggiunta della regola al file di configurazione `/etc/docker/daemon.json`
+* lo script docker-entrypoint.sh come entrypoint del container --> crea le directory necessarie e poi avvia il server SSH per consentire connessioni remote e avvia il Docker daemon che è configurato per comunicare su socket TCP e Unix
 
-Pipeline x build e push delle immagini sul registry pronto --> ho spostato la logica del build e push delle due img alpine e rocky dai tasks ansible a pipeline Jenkins + aggiunto il deploy da pipeline tramite Ansible che rimanda a *deploy_containers* e lo esegue sul container con Docker.
+Lato **pipeline Jenkins**, l'ho configurata per eseguire il build e il push delle due immagini Alpine e Rocky sul registry Docker o Podman, taggando in modo progressivo le immagini (rispecchiano il numero di run della pipeline Jenkins) e sfruttando nel caso di registry Docker il plugin Jenkins di Docker, e poi per distribuire i container tramite un Ansible playbook (`deploy_containers.yml`).

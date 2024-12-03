@@ -44,6 +44,19 @@ pipeline {
 				}
 			}
 		}
+		stage('Decrypt SSH key') {
+			steps {
+				dir('formazione_cm') {
+					withCredentials([string(credentialsId: 'ansible_vault_pwd', variable: 'VAULT_PASSWORD')]) {
+						sh '''
+                        echo "$VAULT_PASSWORD" > vault_pwd_file
+                        ansible-vault decrypt ./id_key_genuser --vault-password-file vault_pwd_file
+                        rm -f vault_pwd_file
+                        '''
+					}
+				}
+			}
+		}
 		stage('Fix key permissions') {
 			steps {
 				dir('formazione_cm') {
@@ -54,18 +67,27 @@ pipeline {
 		stage('Deploy containers') {
 			steps {
 				dir('formazione_cm') {
+					ansiblePlaybook(
+						installation: 'ansible',
+						inventory: 'inventory',
+						playbook: 'deploy_containers.yml',
+						extraVars: [
+							image_tag: env.IMAGE_TAG
+						],
+						hostKeyChecking: false
+					)
+				}
+			}
+		}
+		stage('Encrypt SSH key') {
+			steps {
+				dir('formazione_cm') {
 					withCredentials([string(credentialsId: 'ansible_vault_pwd', variable: 'VAULT_PASSWORD')]) {
-						script {
-							writeFile file: 'vault_password', text: VAULT_PASSWORD
-
-							ansiblePlaybook(
-								installation: 'ansible',
-								inventory: 'inventory',
-								playbook: 'deploy_containers.yml',
-								extras: "--vault-password-file vault_password -e image_tag=${env.IMAGE_TAG}",
-								hostKeyChecking: false
-							)
-						}
+						sh '''
+						echo "$VAULT_PASSWORD" > vault_pwd_file
+						ansible-vault encrypt ./id_key_genuser --vault-password-file vault_pwd_file
+						rm -f vault_pwd_file
+						'''
 					}
 				}
 			}
@@ -74,7 +96,6 @@ pipeline {
 	post {
 		always {
 			cleanWs()
-			sh 'rm -f vault_password'
 		}
 	}
 }

@@ -72,7 +72,7 @@ pipeline {
 	}
 	post {
 		always {
-			cleanWs(),
+			cleanWs()
 			sh 'rm -f vault_password'
 		}
 	}

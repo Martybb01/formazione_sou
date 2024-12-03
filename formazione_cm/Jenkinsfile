@@ -52,7 +52,7 @@ pipeline {
 							installation: 'ansible',
 							inventory: 'inventory',
 							playbook: 'deploy_containers.yml',
-							extras: "--vault-password-file vault_pwd_file -e image_tag=${IMAGE_TAG}",
+							extras: "--vault-password-file vault_pwd -e image_tag=${IMAGE_TAG}",
 							hostKeyChecking: false,
 							colorized: true
 						)

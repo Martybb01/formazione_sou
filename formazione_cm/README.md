@@ -66,6 +66,10 @@ Ho poi deciso di non criptare le chiavi SSH pubbliche di *genuser* in quanto si 
 Per la creazione del container **alpine-ssh-w-docker** ho ripreso il Dockerfile usato per setuppare il container Alpine dello Step 2, integrandolo con:
 * l'aggiunta dei pacchetti necessari per configurare e avviare Docker al boot e per far si che possa gestire altri container
 * l'accesso al registry locale insicuro con l'aggiunta della regola al file di configurazione `/etc/docker/daemon.json`
-* lo script docker-entrypoint.sh come entrypoint del container --> crea le directory necessarie e poi avvia il server SSH per consentire connessioni remote e avvia il Docker daemon che è configurato per comunicare su socket TCP e Unix
+* lo script `docker-entrypoint.sh` come entrypoint del container --> crea le directory necessarie e poi avvia il server SSH per consentire connessioni remote e avvia il Docker daemon che è configurato per comunicare su socket TCP e Unix
 
-Lato **pipeline Jenkins**, l'ho configurata per eseguire il build e il push delle due immagini Alpine e Rocky sul registry Docker o Podman, taggando in modo progressivo le immagini (rispecchiano il numero di run della pipeline Jenkins) e sfruttando nel caso di registry Docker il plugin Jenkins di Docker, e poi per distribuire i container tramite un Ansible playbook (`deploy_containers.yml`).
+Lato **pipeline Jenkins**, l'ho configurata per eseguire il build e il push delle due immagini Alpine e Rocky sul registry Docker o Podman, taggando in modo progressivo le immagini (rispecchiano il numero di run della pipeline Jenkins) e sfruttando nel caso di registry Docker il plugin Jenkins di Docker, e poi per distribuire i container tramite un Ansible playbook (`deploy_containers.yml`) -->
+* La pipeline usa la password salvata in Jenkins come credenziale (*ansible_vault_pwd*) per decriptare temporaneamente la chiave privata *id_key_genuser*.
+* In seguito imposta i permessi della chiave privata a 600 per essere usata da SSH
+* Gestisce l'esecuzione del playbook tramite il plugin Ansible per Jenkins (**ansiblePlaybook**), specificando l'inventory e variabili extra che vengono effettivamente richiamate nel playbook
+* Infine ri-cripta la chiave privata usando ansible vault dopo il deployment ed elimina il file temporaneo per sicurezza. 

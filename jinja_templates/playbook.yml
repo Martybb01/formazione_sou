@@ -1,5 +1,5 @@
 - name: Using Jinja2 templates
-  hosts: all
+  hosts: local
   become: true
   vars:
     user: martinaboccuzzi
@@ -22,4 +22,18 @@
         insertbefore: '- : ALL : ALL'
         create: true
     
-
+- name: Using Jinja2 for Docker
+  hosts: local
+  become: true
+  vars:
+    base_image: "alpine:latest"
+    maintainer: "marboccu"
+    packages: ['python3', 'vim', 'curl']
+    command: "python3 app.py"
+  tasks:
+    - name: create Dockerfile from template
+      ansible.builtin.template:
+        src: templates/docker.j2
+        dest: ./Dockerfile
+      
+      

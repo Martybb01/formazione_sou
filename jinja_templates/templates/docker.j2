@@ -1,0 +1,16 @@
+FROM {{ base_image }}
+
+LABEL maintainer="{{ maintainer }}"
+
+{% if packages %}
+RUN apk update && apk add --no-cache \
+{% for package in packages %}
+	{{ package }}{% if not loop.last %} \{% endif %}
+{% endfor %}
+{% endif %}
+
+COPY . /app
+
+WORKDIR /app
+
+CMD ["{{ command }}"]

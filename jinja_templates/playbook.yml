@@ -13,5 +13,13 @@
           {{ lookup('ansible.builtin.template', 'templates/limits.j2') }}
         insertafter: EOF
         create: true
+      
+    - name: grant access to users from template
+      ansible.builtin.blockinfile:
+        path: /etc/security/access.conf
+        block: |
+          {{ lookup('ansible.builtin.template', 'templates/access.j2') }}
+        insertbefore: '- : ALL : ALL'
+        create: true
     
 

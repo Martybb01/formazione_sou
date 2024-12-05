@@ -1,0 +1,17 @@
+- name: Using Jinja2 templates
+  hosts: all
+  become: true
+  vars:
+    user: martinaboccuzzi
+    env: production
+    whitelist_users: ['lollo', 'pippo', 'pluto']
+  tasks:
+    - name: add settings from template to limits.conf
+      ansible.builtin.blockinfile:
+        path: /etc/security/limits.conf
+        block: |
+          {{ lookup('ansible.builtin.template', 'templates/limits.j2') }}
+        insertafter: EOF
+        create: true
+    
+

@@ -1,0 +1,5 @@
+{% if env == 'production' %}
+{{ user }} nofile 10000
+{% else %}
+{{ user }} nofile 1000
+{% endif %} 
